@@ -69,4 +69,20 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+
+    /**
+     * Show the application registration form.
+     *
+     * @param App\User $user
+     * @return \Illuminate\Http\Response
+     */
+    public function showRegistrationForm( User $user )
+    {
+        if ( $user->all()->first() )
+        {
+            return view('auth.register');
+        } else {
+            return redirect('/');
+        }
+    }
 }
