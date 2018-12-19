@@ -47,7 +47,9 @@
             .title {
                 font-size: 84px;
             }
-
+            .subtitle {
+                font-weight: bold;
+            }
             .links > a {
                 color: #636b6f;
                 padding: 0 25px;
@@ -60,6 +62,30 @@
 
             .m-b-md {
                 margin-bottom: 30px;
+            }
+            .btn-register {
+                margin: 1.5rem;
+                padding: 0.8rem;
+                background-color: #636b6f;
+                color: #ffffff;
+                border: 0;
+                border-radius: 0.2rem;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            input {
+                padding: 0.3rem;
+                border-radius: 0.2rem;
+                border: 1px solid #d9d9d9;
+            }
+            label {
+                font-weight: bold;
+            }
+            select {
+                background-color: #636b6f;
+                color: #ffffff;
+                border-radius: 0.2rem;
+                padding: 0.1rem;
             }
         </style>
     </head>
@@ -78,14 +104,14 @@
                 <div class="title m-b-md">
                     Laravel Users
                 </div>
-                <div class="m-b-md">
+                <div class="subtitle m-b-md">
                     Hi, it seems that there is no users registered. Go ahead and create root user!
                 </div>
-                <div class="card-body">
+                <div class="form-body">
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
 
-                        <div class="form-group row">
+                        <div>
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
                             <div class="col-md-6">
@@ -99,7 +125,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div>
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
@@ -113,7 +139,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
+                        <div>
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
@@ -127,21 +153,21 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                        <div>
+                            <label for="password-confirm">{{ __('Confirm Password') }}</label>
+                            <div>
+                                <input id="password-confirm" type="password" name="password_confirmation" required>
                             </div>
                         </div>
 
-                        <div class="form-group row mb-0">
+                        <div>
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn-register">
                                     {{ __('Register') }}
                                 </button>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
