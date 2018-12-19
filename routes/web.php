@@ -10,10 +10,18 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use App\User;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function (User $user)
+	{
+		if ( $user->all()->first() )
+		{
+			return redirect('login');
+		} else {
+			return view('welcome');
+		}
+	}
+);
 
 Auth::routes();
 
