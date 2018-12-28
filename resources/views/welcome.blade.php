@@ -92,11 +92,12 @@
     <body>
         <div class="flex-center position-ref full-height">
             <div class="top-right links">
-                <form method="POST" action="#">
-                    <label for="lang">Language</label>
-                    <select required name="lang" id="lang">
-                        <option value="en">English</option>
-                        <option value="pl">Polish</option>
+                <form method="POST" action="{{ route('lang.store') }}">
+                    @csrf
+                    <label for="lang">{{ __('welcome.language') }}</label>
+                    <select required name="lang" id="lang" onchange="event.preventDefault(); this.form.submit();">
+                        <option value="en" {{ 'en' === session('lang') ? 'selected' : '' }}>ENG</option>
+                        <option value="pl" {{ 'pl' === session('lang') ? 'selected' : '' }}>PL</option>
                     </select>
                 </form>
             </div>
@@ -105,35 +106,34 @@
                     Laravel Users
                 </div>
                 <div class="subtitle m-b-md">
-                    Hi, it seems that there is no users registered. Go ahead and create root user!
+                    {{ __('welcome.welcome_msg') }}
                 </div>
                 <div>
                     <form method="POST" action="{{ route('register') }}">
                         @csrf
-
                         <div>
-                            <label for="name">{{ __('Name') }}</label>
+                            <label for="name">{{ __('welcome.name') }}</label>
                             <div>
                                 <input id="name" type="text" name="name" value="" required autofocus>
                             </div>
                         </div>
 
                         <div>
-                            <label for="email">{{ __('E-Mail Address') }}</label>
+                            <label for="email">{{ __('welcome.mail') }}</label>
                             <div>
                                 <input id="email" type="email" name="email" value="" required>
                             </div>
                         </div>
 
                         <div>
-                            <label for="password">{{ __('Password') }}</label>
+                            <label for="password">{{ __('welcome.password') }}</label>
                             <div>
                                 <input id="password" type="password" name="password" value="" required>
                             </div>
                         </div>
 
                         <div>
-                            <label for="password-confirm">{{ __('Confirm Password') }}</label>
+                            <label for="password-confirm">{{ __('welcome.confirm_password') }}</label>
                             <div>
                                 <input id="password-confirm" type="password" name="password_confirmation" value="" required>
                             </div>
@@ -142,7 +142,7 @@
                         <div>
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn-register">
-                                    {{ __('Register') }}
+                                    {{ __('welcome.register') }}
                                 </button>
                             </div>
                         </div>

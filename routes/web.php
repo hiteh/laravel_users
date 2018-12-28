@@ -1,28 +1,25 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 use App\User;
 
-Route::get('/', function (User $user)
-	{
-		if ( $user->all()->first() )
+// Language Switch routes
+Route::post('/lang', 'LangController@store')->name('lang.store');
+Route::get('/lang', 'LangController@index')->name('lang');
+
+
+Route::middleware(['lang'])->group(function () {
+	// Auth routes
+	Auth::routes();
+	// App routes
+	Route::get('/', function (User $user)
 		{
-			return redirect('login');
-		} else {
-			return view('welcome');
+			if ( $user->all()->first() )
+			{
+				return redirect('login');
+			} else {
+				return view('welcome');
+			}
 		}
-	}
-);
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+	);
+	Route::get('/home', 'HomeController@index')->name('home');
+});
