@@ -3,9 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <title>Laravel</title>
-
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
 
@@ -96,8 +94,8 @@
                     @csrf
                     <label for="lang">{{ __('welcome.language') }}</label>
                     <select required name="lang" id="lang" onchange="event.preventDefault(); this.form.submit();">
-                        <option value="en" {{ 'en' === session('lang') ? 'selected' : '' }}>ENG</option>
-                        <option value="pl" {{ 'pl' === session('lang') ? 'selected' : '' }}>PL</option>
+                        <option value="en" {{ 'en' === session('lang') ? 'selected' : '' }}>{{'ENG'}}</option>
+                        <option value="pl" {{ 'pl' === session('lang') ? 'selected' : '' }}>{{'PL'}}</option>
                     </select>
                 </form>
             </div>
