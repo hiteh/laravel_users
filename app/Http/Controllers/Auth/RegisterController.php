@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -63,11 +64,52 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        if ( ! User::all()->first() ) 
+        {
+
+            if ( ! Role::where('name', 'root')->first() )
+            {
+                Role::create([
+                    'name'        => 'root',
+                    'description' => 'role.description_root'
+                ]);
+            }
+
+
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+
+
+            $user->roles()->attach( Role::where('name', 'root')->first() );
+
+            return $user;
+
+        }
+        else 
+        {
+            if ( ! Role::where('name', 'user')->first() ) 
+                {
+                    Role::create([
+                        'name'        => 'user',
+                        'description' => 'role.description_user'
+                    ]);
+                }
+
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+
+
+            $user->roles()->attach( Role::where('name', 'user')->first() );
+
+            return $user;
+        }
+
     }
 
     /**
