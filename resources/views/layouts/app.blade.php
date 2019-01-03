@@ -67,6 +67,29 @@
                                 </div>
                             </li>
                         @endguest
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                {{ __('welcome.language') }} <span class="caret"></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('lang') }}"
+                                    onclick="event.preventDefault();
+                                    document.getElementById('lang').value = 'en';
+                                    document.getElementById('lang-form').submit();">
+                                        {{'ENG'}}
+                                </a>
+                                <a class="dropdown-item" href="{{ route('lang') }}"
+                                    onclick="event.preventDefault();
+                                    document.getElementById('lang').value = 'pl';
+                                    document.getElementById('lang-form').submit();">
+                                        {{'PL'}}
+                                </a>
+                                <form id="lang-form" method="POST" action="{{ route('lang.store') }}" style="display:none;">
+                                    @csrf
+                                    <input id="lang" name="lang" value="en">
+                                </form>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
