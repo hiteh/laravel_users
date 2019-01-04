@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'name'             => 'Imię',
     'mail'             => 'Adres e-mail',
     'password'         => 'Hasło',
