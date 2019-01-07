@@ -22,4 +22,6 @@ Route::middleware(['lang'])->group(function () {
 		}
 	);
 	Route::get('/home', 'HomeController@index')->name('home');
+	Route::get('/profile/{id}', 'ProfileController@index')->name('profile');
+	Route::patch('/profile/{id}', 'ProfileController@update')->name('profile.update');
 });

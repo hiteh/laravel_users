@@ -2,5 +2,6 @@
 return [
     'register'         => 'Rejestracja',
     'login'            => 'Logowanie',
-    'logout'           => 'Wyloguj'
+    'logout'           => 'Wyloguj',
+    'profile'          => 'Profil użytkownika',
 ];
