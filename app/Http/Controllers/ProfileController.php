@@ -74,12 +74,10 @@ class ProfileController extends Controller
                 ]);
             }
 
-            return redirect()->route( 'profile', $id )->with( ['success' => 'profile.update_success_msg'] );
+            return redirect()->route( 'profile', $id )->with( ['success' => __('profile.update_success_msg') ] );
         } 
-        else
-        {
-            return redirect()->route( 'profile', $id )->with( ['success' => 'profile.invalid_user_msg'] );
-        }
+
+        return redirect()->route( 'home' )->with( ['warning' => __('profile.invalid_user_msg')] );
     }
 
     /**

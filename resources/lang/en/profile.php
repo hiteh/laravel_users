@@ -10,6 +10,6 @@ return [
     'save'               => 'Save',
     'confirm_password'   => 'Confirm password',
     'password'           => 'Password',
-    'update_success_msg' => 'Profile successfully updated',
+    'update_success_msg' => 'Profile has been successfully updated',
     'invalid_user_msg'   => 'Invalid user'   
 ];
