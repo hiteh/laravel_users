@@ -41,21 +41,28 @@
 	</div>
 </div>
 
-@section('scripts')
-	<script type="text/javascript">
-		
-		document.addEventListener("DOMContentLoaded", function() {
+@if( \Session::has('info') ||
+ 	 \Session::has('warning') ||
+ 	 \Session::has('success') || 
+ 	 \Session::has('primary') || 
+ 	 \Session::has('secondary') ||
+ 	  count( $errors ) )
+	@section('scripts')
+		<script type="text/javascript">
 			
-		const alert = $('#alert')
-			
-		  return (function($) {
-		  	
-		  	if( 0 !== alert.find('.alert').length ) {
-		  		alert.removeClass('d-none') 
-		  	}
+			document.addEventListener("DOMContentLoaded", function() {
+				
+			const alert = $('#alert')
+				
+			  return (function($) {
+			  	
+			  	if( 0 !== alert.find('.alert').length ) {
+			  		alert.removeClass('d-none') 
+			  	}
 
-		   })(jQuery)
-		})
+			   })(jQuery)
+			})
 
-	</script>
-@endsection
+		</script>
+	@endsection
+@endif
