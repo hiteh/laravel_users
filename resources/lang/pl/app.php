@@ -1,7 +1,8 @@
 <?php
 return [
-    'register'         => 'Rejestracja',
-    'login'            => 'Logowanie',
-    'logout'           => 'Wyloguj',
-    'profile'          => 'Profil użytkownika',
+    'register' => 'Rejestracja',
+    'login'    => 'Logowanie',
+    'logout'   => 'Wyloguj',
+    'profile'  => 'Profil użytkownika',
+    'users'    => 'Użytkownicy'
 ];
