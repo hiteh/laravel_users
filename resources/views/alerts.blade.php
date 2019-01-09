@@ -47,7 +47,7 @@
  	 \Session::has('primary') || 
  	 \Session::has('secondary') ||
  	  count( $errors ) )
-	@section('scripts')
+	@section('alert-scripts')
 		<script type="text/javascript">
 			
 			document.addEventListener("DOMContentLoaded", function() {
