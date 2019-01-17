@@ -75,15 +75,15 @@
                             </li>
                         @endguest
                         <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                <i class="fas fa-globe-europe"></i> <span class="caret"></span>
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre style="text-transform: uppercase;">
+                                {{ str_replace('_', '-', app()->getLocale()) }}
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ route('lang') }}"
                                     onclick="event.preventDefault();
                                     document.getElementById('lang').value = 'en';
                                     document.getElementById('lang-form').submit();">
-                                        {{'ENG'}}
+                                        {{'EN'}}
                                 </a>
                                 <a class="dropdown-item" href="{{ route('lang') }}"
                                     onclick="event.preventDefault();
