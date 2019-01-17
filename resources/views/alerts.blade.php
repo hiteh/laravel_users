@@ -4,36 +4,54 @@
 			@if(\Session::has('info'))
 				<div class="alert alert-info" role="alert">
 	  				{{ \Session::get('info') }}
+	  				<button class="close" aria-label="Close">
+						<span aria-hidden="true">{{ 'x' }}</span>
+					</button>
 				</div>
 			@endif
 
 			@if(\Session::has('warning'))
 				<div class="alert alert-warning" role="alert">
 	  				{{ \Session::get('warning') }}
+	  				<button class="close" aria-label="Close">
+						<span aria-hidden="true">{{ 'x' }}</span>
+					</button>
 				</div>
 			@endif
 
 			@if(\Session::has('success'))
 				<div class="alert alert-success" role="alert">
 	  				{{ \Session::get('success') }}
+	  				<button class="close" aria-label="Close">
+						<span aria-hidden="true">{{ 'x' }}</span>
+					</button>
 				</div>
 			@endif
 
 			@if(\Session::has('primary'))
 				<div class="alert alert-primary" role="alert">
 	  				{{ \Session::get('primary') }}
+	  				<button class="close" aria-label="Close">
+						<span aria-hidden="true">{{ 'x' }}</span>
+					</button>
 				</div>
 			@endif
 
 			@if(\Session::has('secondary'))
 				<div class="alert alert-secondary" role="alert">
 	  				{{ \Session::get('secondary') }}
+	  				<button class="close" aria-label="Close">
+						<span aria-hidden="true">{{ 'x' }}</span>
+					</button>
 				</div>
 			@endif
 			@if ( count( $errors ) )
 				@foreach ( $errors->all() as $error )
 					<div class="alert alert-danger" role="alert">
 		  				{{ $error }}
+			  			<button class="close" aria-label="Close">
+							<span aria-hidden="true">{{ 'x' }}</span>
+						</button>
 					</div>
 				@endforeach
 			@endif
@@ -52,13 +70,18 @@
 			
 			document.addEventListener("DOMContentLoaded", function() {
 				
-			const alert = $('#alert')
+			  (function($) {
 				
-			  return (function($) {
+				const alert = $('#alert')
+				const closeButton = alert.find('.close')
 			  	
 			  	if( 0 !== alert.find('.alert').length ) {
 			  		alert.removeClass('d-none') 
 			  	}
+
+			  	closeButton.on('click', function() {
+			  		alert.addClass('d-none')
+			  	})
 
 			   })(jQuery)
 			})
