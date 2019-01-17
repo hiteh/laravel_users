@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
+use App\Http\Middleware\Admin;
 use App\User;
 use App\Role;
 
@@ -21,6 +22,7 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('admin');
     }
     /**
      * Display a listing of the resource.
