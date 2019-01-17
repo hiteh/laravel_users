@@ -25,6 +25,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('delete-user', function($user, $id) {
+            return $user->id != $id && $user->roles()->where( 'name', 'root' )->get()->first();
+        });
     }
 }
