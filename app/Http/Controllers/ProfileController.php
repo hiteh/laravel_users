@@ -19,6 +19,7 @@ class ProfileController extends Controller
     public function __construct()
     {
     	$this->middleware('auth');
+        $this->middleware('profile');
     }
     
     /**
@@ -27,17 +28,9 @@ class ProfileController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function index( $id )
+    public function index()
     {
-        if ( Auth::user()->id == $id ) 
-        {
-            return view( 'user.profile', ['user' => Auth::user()] );
-        } 
-        else
-        {
-            return redirect('/');
-        }
-        
+        return view( 'user.profile', ['user' => Auth::user()] );
     }
 
     /**
@@ -49,35 +42,34 @@ class ProfileController extends Controller
      */
     public function update( $id, Request $request )
     {
-        if ( Auth::user()->id == $id ) 
+        $data = $this->validator($request->all(), $id)->validate();
+        $user = User::all()->find( $id );
+
+        if ( $user )
         {
-            $data = $this->validator($request->all(), $id)->validate();
-
-            if ( ! empty($data['name']) )
+            foreach ( $data as $field => $value )
             {
-                Auth::user()->update([
-                    'name'  => $data['name'],
-                ]);
-            }
+                if ( 'password' === $field )
+                {
+                    $user->update([
+                        $field => Hash::make( $value ),
+                    ]);
+                }
+                else
+                {
+                    $user->update([
+                        $field => $value,
+                    ]);
+                }
 
-            if ( ! empty($data['email']) )
-            {
-                Auth::user()->update([
-                    'email' => $data['email'],
-                ]);
             }
-
-            if ( ! empty($data['password']) )
-            {
-                Auth::user()->update([
-                    'password' => Hash::make($data['password']),
-                ]);
-            }
-
             return redirect()->route( 'profile', $id )->with( ['success' => __('profile.update_success_msg') ] );
-        } 
+        }
+        else
+        {
+            return redirect()->route( 'profile', $id )->with( ['warning' => __('profile.invalid_user_msg') ] );
+        }
 
-        return redirect()->route( 'home' )->with( ['warning' => __('profile.invalid_user_msg')] );
     }
 
     /**
