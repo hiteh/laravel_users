@@ -43,7 +43,7 @@ class ProfileController extends Controller
     public function update( $id, Request $request )
     {
         $data = $this->validator($request->all(), $id)->validate();
-        $user = User::all()->find( $id );
+        $user = Auth::user();
 
         if ( $user )
         {
