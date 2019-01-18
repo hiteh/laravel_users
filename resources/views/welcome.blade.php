@@ -94,7 +94,7 @@
                     @csrf
                     <label for="lang">{{ __('welcome.language') }}</label>
                     <select required name="lang" id="lang" onchange="event.preventDefault(); this.form.submit();">
-                        <option value="en" {{ 'en' === session('lang') ? 'selected' : '' }}>{{'ENG'}}</option>
+                        <option value="en" {{ 'en' === session('lang') ? 'selected' : '' }}>{{'EN'}}</option>
                         <option value="pl" {{ 'pl' === session('lang') ? 'selected' : '' }}>{{'PL'}}</option>
                     </select>
                 </form>
