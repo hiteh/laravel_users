@@ -95,7 +95,6 @@ class UsersController extends Controller
                         $field => $value,
                     ]);
                 }
-
             }
 
             return redirect()->route('users')->with(['success' => __( 'users.user_updated_msg', [ 'name' => $user->name ] )]);
@@ -104,7 +103,6 @@ class UsersController extends Controller
         {
             return redirect()->route('users')->with(['warning' => __( 'users.user_invalid_msg', [ 'name' => $user->name ] )]);
         }
-
     }
 
     /**
