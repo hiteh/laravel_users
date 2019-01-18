@@ -29,7 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('delete-user', function($user, $id) {
             return $user->id != $id && 
                 $user->roles()->where( 'name', 'root' )->orWhere( 'name', 'admin' )->get()->first() &&
-                'root' != User::all()->find( $id )->roles()->where( 'name', 'root' )->get()->first();
+                empty( User::all()->find( $id )->roles()->where( 'name', 'root' )->get()->first() );
         });
     }
 }
