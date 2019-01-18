@@ -66,7 +66,7 @@ class RegisterController extends Controller
     {
         if ( ! User::all()->first() ) 
         {
-
+            // create basic roles
             if ( ! Role::where('name', 'root')->first() )
             {
                 Role::create([
@@ -75,7 +75,23 @@ class RegisterController extends Controller
                 ]);
             }
 
+            if ( ! Role::where('name', 'user')->first() ) 
+            {
+                Role::create([
+                    'name'        => 'user',
+                    'description' => 'role.description_user'
+                ]);
+            }
 
+            if ( ! Role::where('name', 'admin')->first() ) 
+            {
+                Role::create([
+                    'name'        => 'admin',
+                    'description' => 'role.description_admin'
+                ]);
+            }
+
+            // create first root user
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
@@ -90,14 +106,6 @@ class RegisterController extends Controller
         }
         else 
         {
-            if ( ! Role::where('name', 'user')->first() ) 
-                {
-                    Role::create([
-                        'name'        => 'user',
-                        'description' => 'role.description_user'
-                    ]);
-                }
-
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
