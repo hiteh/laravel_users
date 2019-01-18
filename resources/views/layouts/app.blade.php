@@ -50,7 +50,7 @@
                                 </li>
                             @endif
                         @else
-                            @if ( Auth::user()->roles()->where('name', 'root')->exists() )
+                            @if ( Auth::user()->roles()->where('name', 'root')->orWhere('name', 'admin')->exists() )
                                 <li class="nav-item">
                                     <a href="{{ route('users') }}" class="nav-link"> {{ __('app.users') }} </a>
                                 </li>
