@@ -70,39 +70,47 @@ class UsersController extends Controller
 
         $data = $this->validator($request->all(), $id)->validate();
         $user = User::all()->find( $id );
-
-        if ( $user )
+        
+        if ( Gate::denies('update-user',$id) ) 
         {
-            if ( $user->roles()->where( 'name', 'root' )->get()->first() )
+            if ( $user )
             {
-                if ( ! empty($data['role']) )
+                if ( $user->roles()->where( 'name', 'root' )->get()->first() )
                 {
-                    unset($data['role']);
+                    if ( ! empty($data['role']) )
+                    {
+                        unset($data['role']);
+                    }
                 }
-            }
 
-            foreach ( $data as $field => $value )
+                foreach ( $data as $field => $value )
+                {
+                    if ( 'password' === $field )
+                    {
+                        $user->update([
+                            $field => Hash::make( $value ),
+                        ]);
+                    }
+                    else
+                    {
+                        $user->update([
+                            $field => $value,
+                        ]);
+                    }
+                }
+
+                return redirect()->route('users')->with(['success' => __( 'users.user_updated_msg', [ 'name' => $user->name ] )]);
+            }
+            else
             {
-                if ( 'password' === $field )
-                {
-                    $user->update([
-                        $field => Hash::make( $value ),
-                    ]);
-                }
-                else
-                {
-                    $user->update([
-                        $field => $value,
-                    ]);
-                }
+                return redirect()->route('users')->with(['warning' => __( 'users.user_invalid_msg', [ 'name' => $user->name ] )]);
             }
-
-            return redirect()->route('users')->with(['success' => __( 'users.user_updated_msg', [ 'name' => $user->name ] )]);
         }
         else
         {
-            return redirect()->route('users')->with(['warning' => __( 'users.user_invalid_msg', [ 'name' => $user->name ] )]);
+            return redirect()->route('users')->with(['warning' => __( 'users.forbidden_operation_msg' )]);
         }
+
     }
 
     /**
