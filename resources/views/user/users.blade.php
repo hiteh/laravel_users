@@ -121,6 +121,13 @@
                     // set modal title
                     modalTitle.text('{{ __( 'users.edit_title' ) }}')
 
+                    // Remove role select when user has root role
+                    if (userRole === 'root') {
+                        form.find('#role-form-component').replaceWith( emptyRoleComponent )
+                    } else if ( form.find('#role-form-component').attr( 'display','none' ) ) {
+                        form.find('#role-form-component').replaceWith( clonedRoleComponent )
+                    }
+
                     // Mark current user role as selected option
                     form.find('#role').children().each(function ( index, child ) {
                         let childSelected = $(child)
@@ -130,12 +137,6 @@
                             childSelected.removeAttr('selected')
                         }
                      })
-                    // Remove role select when user has root role
-                    if (userRole === 'root') {
-                        form.find('#role-form-component').replaceWith( emptyRoleComponent )
-                    } else if ( form.find('#role-form-component').attr( 'display','none' ) ) {
-                        form.find('#role-form-component').replaceWith( clonedRoleComponent )
-                    }
 
                     // Update action with route that contains current user id
                     form.attr('action', route)
@@ -162,6 +163,12 @@
                     // Reset form fields
                     formName.val('')
                     formEmail.val('')
+
+                    // Add select role component if previously removed
+                    if ( form.find('#role-form-component').attr('display','none') ) {
+                        form.find('#role-form-component').replaceWith( clonedRoleComponent )
+                    }
+
                     // Remove selected attribute
                     form.find('#role').children().each(function ( index, child ) {
                         const childSelected = $(child)
@@ -171,12 +178,7 @@
                             childSelected.removeAttr('selected')
                         }
                     })
-                    // Add select role component if previously removed
-                    if ( form.find('#role-form-component').attr('display','none') ) {
-                        form.find('#role-form-component').replaceWith( clonedRoleComponent )
-                    }
                     
-
                     // Remove patch input
                     if ( patchInput.length !== 0 ) {
                         patchInput.remove()
