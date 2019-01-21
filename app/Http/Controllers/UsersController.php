@@ -99,9 +99,13 @@ class UsersController extends Controller
                     }
                 }
 
-                $user->roles()->detach();
+                if ( ! empty($data['role']) )
+                {
+                    $user->roles()->detach();
 
-                $user->roles()->attach( Role::where('name', $data['role'] )->first() );
+                    $user->roles()->attach( Role::where('name', $data['role'] )->first() );
+                }
+
 
                 return redirect()->route('users')->with(['success' => __( 'users.user_updated_msg', [ 'name' => $user->name ] )]);
             }
