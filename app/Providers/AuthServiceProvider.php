@@ -33,8 +33,11 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('update-user', function($user, $id) {
-            return empty( $user->roles()->where( 'name', 'root' )->get()->first() ) &&
-               ! empty( User::all()->find( $id )->roles()->where( 'name', 'root' )->get()->first() );
+            return $user->roles()->where( 'name', 'root' )->get()->first() ||
+                ( 
+                    $user->roles()->where( 'name', 'admin' )->get()->first() &&
+                    empty( User::all()->find( $id )->roles()->where( 'name', 'root' )->get()->first() ) 
+                );
         });
     }
 }

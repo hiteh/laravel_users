@@ -71,7 +71,7 @@ class UsersController extends Controller
         $data = $this->validator($request->all(), $id)->validate();
         $user = User::all()->find( $id );
         
-        if ( Gate::denies('update-user',$id) ) 
+        if ( Gate::allows('update-user',$id) ) 
         {
             if ( $user )
             {
@@ -111,7 +111,7 @@ class UsersController extends Controller
             }
             else
             {
-                return redirect()->route('users')->with(['warning' => __( 'users.user_invalid_msg', [ 'name' => $user->name ] )]);
+                return redirect()->route('users')->with(['warning' => __( 'users.user_invalid_msg' )]);
             }
         }
         else
