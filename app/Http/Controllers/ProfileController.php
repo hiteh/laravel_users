@@ -18,8 +18,8 @@ class ProfileController extends Controller
      */
     public function __construct()
     {
-    	$this->middleware('auth');
-        $this->middleware('profile');
+    	$this->middleware( 'auth' );
+        $this->middleware( 'profile' );
     }
     
     /**
@@ -42,7 +42,7 @@ class ProfileController extends Controller
      */
     public function update( $id, Request $request )
     {
-        $data = $this->validator($request->all(), $id)->validate();
+        $data = $this->validator( $request->all(), $id )->validate();
         $user = Auth::user();
 
         if ( $user )
@@ -81,10 +81,10 @@ class ProfileController extends Controller
      */
     protected function validator( array $data, $id = null )
     {
-        return Validator::make($data, [
+        return Validator::make( $data, [
             'name'     => ['sometimes','required', 'string', 'max:255'],
             'email'    => ['sometimes','required', 'string', 'email', 'max:255', 'unique:users,email,'.$id ],
             'password' => ['sometimes','required', 'string', 'min:6', 'confirmed'],
-        ]);
+        ] );
     }
 }
