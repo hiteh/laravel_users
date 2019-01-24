@@ -16,7 +16,7 @@ class Profile
      */
     public function handle($request, Closure $next)
     {
-        if ( Auth::user()->id == $request->route()->parameters()['id'] )
+        if ( Auth::check() )
         {
             return $next($request);
         }

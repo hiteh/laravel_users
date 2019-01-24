@@ -26,7 +26,7 @@ Route::middleware(['lang'])->group(function () {
 	Route::get('/home', 'HomeController@index')->name('home');
 	// Profile
 		//Show
-	Route::get('/profile/{id}', 'ProfileController@index')->name('profile');
+	Route::get('/profile', 'ProfileController@index')->name('profile');
 		//Patch
 	Route::patch('/profile/{id}', 'ProfileController@update')->name('profile.update');
 	// Users
