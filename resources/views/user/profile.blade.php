@@ -52,6 +52,7 @@
 
         @include('user.modals.edit_profile')
         @include('user.modals.change_password')
+        @include('user.modals.add_edit_avatar')
         
     @endsection
 @endauth
