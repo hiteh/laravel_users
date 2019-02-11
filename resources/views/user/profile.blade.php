@@ -27,6 +27,7 @@
                                 </div>
                                 <div class="col-3 d-flex justify-content-center align-items-center">
                                     <i class="fas fa-user fa-5x"></i>
+                                    <img src="{{ asset( 'storage/'.$user->avatar ) }}" ></img>
                                 </div>
                             </div>
 

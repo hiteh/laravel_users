@@ -55,6 +55,14 @@ class ProfileController extends Controller
                         $field => Hash::make( $value ),
                     ]);
                 }
+                else if ( 'avatar' === $field )
+                {
+                    $value->store('public');
+
+                    $user->update([
+                        'avatar' => $value->hashName(),
+                    ]);
+                }
                 else
                 {
                     $user->update([
@@ -63,6 +71,7 @@ class ProfileController extends Controller
                 }
 
             }
+
             return redirect()->route( 'profile', $id )->with( ['success' => __('profile.update_success_msg') ] );
         }
         else
@@ -85,6 +94,7 @@ class ProfileController extends Controller
             'name'     => ['sometimes','required', 'string', 'max:255'],
             'email'    => ['sometimes','required', 'string', 'email', 'max:255', 'unique:users,email,'.$id ],
             'password' => ['sometimes','required', 'string', 'min:6', 'confirmed'],
+            'avatar'   => ['sometimes', 'required', 'image'],
         ] );
     }
 }
