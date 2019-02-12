@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProfileController extends Controller
@@ -58,6 +59,8 @@ class ProfileController extends Controller
                 else if ( 'avatar' === $field )
                 {
                     $value->store('public');
+
+                    Storage::delete( 'public/'.$user->avatar );
 
                     $user->update([
                         'avatar' => $value->hashName(),
