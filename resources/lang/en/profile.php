@@ -11,5 +11,7 @@ return [
     'confirm_password'   => 'Confirm password',
     'password'           => 'Password',
     'update_success_msg' => 'Profile has been successfully updated',
-    'invalid_user_msg'   => 'Invalid user'   
+    'invalid_user_msg'   => 'Invalid user',
+    'edit_avatar'        => 'Edit avatar',
+    'users_avatar'       => "User's avatar",
 ];

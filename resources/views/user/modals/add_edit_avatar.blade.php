@@ -21,9 +21,9 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __( 'Back' ) }}</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __( 'profile.back' ) }}</button>
             <button type="button" type="submit" class="btn btn-primary" onclick="event.preventDefault();
-                document.getElementById('avatar-form').submit();">{{ __( 'Save' ) }}</button>
+                document.getElementById('avatar-form').submit();">{{ __( 'profile.save' ) }}</button>
           </div>
         </div>
       </div>
