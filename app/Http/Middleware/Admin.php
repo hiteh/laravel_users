@@ -16,7 +16,10 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
-        if ( Auth::user()->roles()->where( 'name', 'root' )->orWhere( 'name', 'admin' )->get()->first() )
+        $root = Auth::user()->roles()->where( 'name', 'root' )->exists();
+        $admin = Auth::user()->roles()->where( 'name', 'admin' )->exists();
+
+        if ( $root || $admin )
         {
             return $next($request); 
         }

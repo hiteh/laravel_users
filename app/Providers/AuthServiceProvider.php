@@ -27,21 +27,31 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define( 'create-user', function( $user ) {
-            return $user->roles()->where( 'name', 'root' )->orWhere( 'name', 'admin' )->get()->first();
+            $root =  $user->roles()->where( 'name', 'root' )->exists();
+            $admin = $user->roles()->where( 'name', 'admin' )->exists();
+
+            return $root || $admin;
         } );
 
         Gate::define( 'delete-user', function( $user, $id ) {
-            return $user->id != $id && 
-                $user->roles()->where( 'name', 'root' )->orWhere( 'name', 'admin' )->get()->first() &&
-                empty( User::all()->find( $id )->roles()->where( 'name', 'root' )->get()->first() );
+            $self = $user->id == $id;
+            $root =  $user->roles()->where( 'name', 'root' )->exists();
+            $admin = $user->roles()->where( 'name', 'admin' )->exists();
+            $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
+            $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
+
+            return ! $self && ( $root || $admin ) && ! $target_is_root && ! ( $admin && $target_is_admin );
         } );
 
         Gate::define( 'update-user', function( $user, $id ) {
-            return $user->roles()->where( 'name', 'root' )->get()->first() ||
-                ( 
-                    $user->roles()->where( 'name', 'admin' )->get()->first() &&
-                    empty( User::all()->find( $id )->roles()->where( 'name', 'root' )->get()->first() ) 
-                );
+            $self = $user->id == $id;
+            $root =  $user->roles()->where( 'name', 'root' )->exists();
+            $admin = $user->roles()->where( 'name', 'admin' )->exists();
+            $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
+            $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
+
+
+            return $root || ( $admin && ! $target_is_root && ! ( $admin && $target_is_admin && ! $self ) );
         } );
     }
 }
