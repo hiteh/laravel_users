@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
 use App\Interfaces\UsersRepositoryInterface;
-use App\Http\Middleware\Admin;
-use App\User;
-use App\Role;
+use App\Interfaces\RolesRepositoryInterface;
 
 class UsersController extends Controller
 {
@@ -20,11 +17,12 @@ class UsersController extends Controller
      *
      * @return void
      */
-    public function __construct( UsersRepositoryInterface $users )
+    public function __construct( UsersRepositoryInterface $users, RolesRepositoryInterface $roles )
     {
         $this->middleware( 'auth' );
         $this->middleware( 'admin' );
         $this->users = $users;
+        $this->roles = $roles;
     }
     /**
      * Display a listing of the resource.
@@ -35,7 +33,7 @@ class UsersController extends Controller
     {
         return view( 'user.users', [
             'users' => $this->users->getAllUsers(),
-        	'roles' => Role::where( 'name','<>','root' )->pluck( 'name' )
+        	'roles' => $this->roles->getAvailableRolesList(),
     	] );
     }
 
@@ -111,7 +109,7 @@ class UsersController extends Controller
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$id ],
             'password' => ['sometimes','required', 'string', 'min:6', 'confirmed'],
-            'role'     => ['sometimes','required', 'string', Rule::in( Role::where( 'name','<>','root' )->pluck( 'name' ) ) ],
+            'role'     => ['sometimes','required', 'string', Rule::in( $this->roles->getAvailableRolesList() ) ],
         ] );
     }
 
