@@ -2,18 +2,28 @@
 
 namespace App\Repositories;
 use App\Interfaces\UsersRepositoryInterface;
+use App\Interfaces\RolesRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use App\User;
-use App\Role;
 
 class UsersRepository implements UsersRepositoryInterface
 {
+	/**
+     * Create a new repository instance.
+     *
+     * @return void
+     */
+    public function __construct( RolesRepositoryInterface $roles )
+    {
+        $this->roles = $roles;
+    }
+
 	public function getAllUsers( array $order = ['created_at', 'asc'], int $items_per_page = 10 )
 	{
 		return User::orderBy( ...$order )->paginate( $items_per_page );
 	}
 
-	public function getUserById( $id )
+	public function getUserById( string $id )
 	{
 		return User::all()->find( $id );
 	}
@@ -26,13 +36,14 @@ class UsersRepository implements UsersRepositoryInterface
             'password' => Hash::make( $data['password'] ),
         ]);
 
-        $user->roles()->attach( Role::where( 'name', $data['role'] )->first() );
+        $user->roles()->attach( $this->roles->getRoleByName( $data['role'] ) );
 
         return $user;
 	}
 
-	public function deleteUser( $id )
+	public function deleteUser( string $id )
 	{
+
 		$user = $this->getUserById( $id );
 
         $user->roles()->detach();
@@ -41,15 +52,13 @@ class UsersRepository implements UsersRepositoryInterface
         return $user;
 	}
 
-	public function updateUser( $id, array $data )
+	public function updateUser( string $id, array $data )
 	{
 		$user = $this->getUserById( $id );
 
-        if ( $user->roles()->where( 'name', 'root' )->exists() && ! empty( $data['role']) )
+        if ( $user->isRoot() && ! empty( $data['role']) )
         {
-
            unset( $data['role'] );
-
         }
 
         foreach ( $data as $field => $value )
@@ -72,7 +81,7 @@ class UsersRepository implements UsersRepositoryInterface
         {
             $user->roles()->detach();
 
-            $user->roles()->attach( Role::where( 'name', $data['role'] )->first() );
+            $user->roles()->attach( $this->roles->getRoleByName( $data['role'] ) );
         }
 
         return $user;
