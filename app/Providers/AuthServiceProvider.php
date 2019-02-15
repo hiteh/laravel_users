@@ -34,24 +34,38 @@ class AuthServiceProvider extends ServiceProvider
         } );
 
         Gate::define( 'delete-user', function( $user, $id ) {
-            $self = $user->id == $id;
-            $root =  $user->roles()->where( 'name', 'root' )->exists();
-            $admin = $user->roles()->where( 'name', 'admin' )->exists();
-            $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
-            $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
 
-            return ! $self && ( $root || $admin ) && ! $target_is_root && ! ( $admin && $target_is_admin );
+            if ( User::all()->find( $id ) ) 
+            {
+                $self = $user->id == $id;
+                $root =  $user->roles()->where( 'name', 'root' )->exists();
+                $admin = $user->roles()->where( 'name', 'admin' )->exists();
+                $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
+                $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
+
+                return ! $self && ( $root || $admin ) && ! $target_is_root && ! ( $admin && $target_is_admin );
+            }
+
+            return false;
+
         } );
 
         Gate::define( 'update-user', function( $user, $id ) {
-            $self = $user->id == $id;
-            $root =  $user->roles()->where( 'name', 'root' )->exists();
-            $admin = $user->roles()->where( 'name', 'admin' )->exists();
-            $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
-            $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
+
+            if ( User::all()->find( $id ) )
+            {
+                $self = $user->id == $id;
+                $root =  $user->roles()->where( 'name', 'root' )->exists();
+                $admin = $user->roles()->where( 'name', 'admin' )->exists();
+                $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
+                $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
 
 
-            return $root || ( $admin && ! $target_is_root && ! ( $admin && $target_is_admin && ! $self ) );
+                return $root || ( $admin && ! $target_is_root && ! ( $admin && $target_is_admin && ! $self ) );
+            }
+
+            return false;
+
         } );
     }
 }
