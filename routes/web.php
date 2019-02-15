@@ -15,7 +15,7 @@ Route::middleware(['lang'])->group(function () {
 		{
 			if ( $user->all()->first() )
 			{
-				return redirect('login');
+				return view('root');
 			} else {
 				return view('welcome');
 			}
