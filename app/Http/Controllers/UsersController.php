@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Gate;
+use App\Interfaces\UsersRepositoryInterface;
 use App\Http\Middleware\Admin;
 use App\User;
 use App\Role;
@@ -19,10 +20,11 @@ class UsersController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( UsersRepositoryInterface $users )
     {
         $this->middleware( 'auth' );
         $this->middleware( 'admin' );
+        $this->users = $users;
     }
     /**
      * Display a listing of the resource.
@@ -32,7 +34,7 @@ class UsersController extends Controller
     public function index()
     {
         return view( 'user.users', [
-        	'users' => User::orderBy( 'created_at', 'desc' )->paginate( 10 ),
+            'users' => $this->users->getAllUsers(),
         	'roles' => Role::where( 'name','<>','root' )->pluck( 'name' )
     	] );
     }
@@ -49,22 +51,12 @@ class UsersController extends Controller
         {
             $data = $this->validator( $request->all() )->validate();
 
-            $user = User::create([
-                'name'     => $data['name'],
-                'email'    => $data['email'],
-                'password' => Hash::make( $data['password'] ),
-            ]);
+            $user = $this->users->addUser( $data );
 
-        $user->roles()->attach( Role::where( 'name', $data['role'] )->first() );
-
-        return redirect()->route('users')->with( ['success' => __( 'users.user_created_msg', [ 'name' => $user->name ] )] );
-        
-        }
-        else
-        {
-            return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
+            return redirect()->route('users')->with( ['success' => __( 'users.user_created_msg', [ 'name' => $user->name ] )] );
         }
 
+        return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
     }
 
     /**
@@ -79,53 +71,12 @@ class UsersController extends Controller
         if ( Gate::allows( 'update-user',$id ) ) 
         {
             $data = $this->validator( $request->all(), $id )->validate();
-            $user = User::all()->find( $id );
+            $user = $this->users->updateUser( $id, $data );
 
-            if ( $user )
-            {
-                if ( $user->roles()->where( 'name', 'root' )->get()->first() )
-                {
-                    if ( ! empty( $data['role']) )
-                    {
-                        unset( $data['role'] );
-                    }
-                }
-
-                foreach ( $data as $field => $value )
-                {
-                    if ( 'password' === $field )
-                    {
-                        $user->update([
-                            $field => Hash::make( $value ),
-                        ]);
-                    }
-                    else
-                    {
-                        $user->update([
-                            $field => $value,
-                        ]);
-                    }
-                }
-
-                if ( ! empty( $data['role']) )
-                {
-                    $user->roles()->detach();
-
-                    $user->roles()->attach( Role::where( 'name', $data['role'] )->first() );
-                }
-
-                return redirect()->route( 'users' )->with( ['success' => __( 'users.user_updated_msg', ['name' => $user->name] )] );
-            }
-            else
-            {
-                return redirect()->route( 'users' )->with( ['warning' => __( 'users.user_invalid_msg' )] );
-            }
-        }
-        else
-        {
-            return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
+            return redirect()->route( 'users' )->with( ['success' => __( 'users.user_updated_msg', ['name' => $user->name] )] );
         }
 
+        return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
     }
 
     /**
@@ -136,26 +87,15 @@ class UsersController extends Controller
      */
     public function destroy( $id )
     {
-        if ( Gate::allows( 'delete-user',$id ) )
+        if ( Gate::allows( 'delete-user', $id ) )
         {
-            $user = User::all()->find( $id );
+            $user = $this->users->deleteUser( $id );
 
-            if ( $user ) 
-            {
-                $user->roles()->detach();
-                $user->delete();
+            return redirect()->route( 'users' )->with( ['success' => __( 'users.user_deleted_msg', ['name' => $user->name ] )] );
+        }
 
-                return redirect()->route( 'users' )->with( ['success' => __( 'users.user_deleted_msg', ['name' => $user->name ] )] );
-            } 
-            else
-            {
-                return redirect()->route( 'users' )->with( ['warning' => __( 'users.user_invalid_msg' )] );
-            }
-        }
-        else
-        {
-            return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
-        }
+        return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
+
     }
     
     /**
