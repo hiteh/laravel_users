@@ -9,7 +9,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form method="POST" id="profile-form" action="{{ route( 'profile.update', $user->id ) }}">
+        <form method="POST" id="profile-form" action="{{ route( 'profile.update' ) }}">
             @csrf
             {!!  method_field( 'patch' ) !!}
             <div class="form-group row">
