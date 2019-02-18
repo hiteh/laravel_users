@@ -32,6 +32,6 @@ class LangController extends Controller
     public function index( Request $request )
     {
         // redirect back
-        return redirect()->route('home');
+        return redirect()->back();
     }
 }
