@@ -4,6 +4,7 @@ namespace App\Repositories;
 use App\Interfaces\UsersRepositoryInterface;
 use App\Interfaces\RolesRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use App\User;
 
 class UsersRepository implements UsersRepositoryInterface
@@ -69,19 +70,28 @@ class UsersRepository implements UsersRepositoryInterface
                     $field => Hash::make( $value ),
                 ]);
             }
+            else if ( 'avatar' === $field )
+            {
+                $value->store('public');
+
+                Storage::delete( 'public/'.$user->avatar );
+
+                $user->update([
+                    'avatar' => $value->hashName(),
+                ]);
+            }
+            else if ( 'role' === $field )
+            {
+	            $user->roles()->detach();
+
+	            $user->roles()->attach( $this->roles->getRoleByName( $value ) );
+	        }
             else
             {
                 $user->update([
                     $field => $value,
                 ]);
             }
-        }
-
-        if ( ! empty( $data['role']) )
-        {
-            $user->roles()->detach();
-
-            $user->roles()->attach( $this->roles->getRoleByName( $data['role'] ) );
         }
 
         return $user;
