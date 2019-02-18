@@ -26,7 +26,7 @@ class RootController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Depending on whether there is at least one user, show root or welcome view.
      *
      * @return \Illuminate\Http\Response
      */
