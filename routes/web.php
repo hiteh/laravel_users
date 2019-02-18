@@ -28,7 +28,7 @@ Route::middleware(['lang'])->group(function () {
 		//Show
 	Route::get('/profile', 'ProfileController@index')->name('profile');
 		//Patch
-	Route::patch('/profile/{id}', 'ProfileController@update')->name('profile.update');
+	Route::patch('/profile-update', 'ProfileController@update')->name('profile.update');
 	// Users
 		//Show
 	Route::get('/users', 'UsersController@index')->name('users');
