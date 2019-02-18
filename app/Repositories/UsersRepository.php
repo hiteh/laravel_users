@@ -9,7 +9,14 @@ use App\User;
 
 class UsersRepository implements UsersRepositoryInterface
 {
-	/**
+    /**
+     * Roles repository instance.
+     *
+     * @var App\Repositories\RolesRepository
+     */
+    protected $roles;
+
+    /**
      * Create a new repository instance.
      *
      * @return void
@@ -17,6 +24,11 @@ class UsersRepository implements UsersRepositoryInterface
     public function __construct( RolesRepositoryInterface $roles )
     {
         $this->roles = $roles;
+    }
+
+    public function hasAnyUser()
+    {
+        return User::all()->first()? true : false;
     }
 
 	public function getAllUsers( array $order = ['created_at', 'asc'], int $items_per_page = 10 )
