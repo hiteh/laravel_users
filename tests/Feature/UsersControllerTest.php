@@ -32,12 +32,11 @@ class UsersControllerTest extends TestCase
 
         $rootUser->roles()->attach( $rootRole );
 
+        $role = factory('App\Role')->create(['name' => 'user']);
 
         for ( $i = 0; $i <= 3; $i ++ ) {
 
             $user = factory('App\User')->create();
-
-            $role = factory('App\Role')->create(['name' => 'user']);
 
             $user->roles()->attach( $role );
         }
@@ -66,12 +65,11 @@ class UsersControllerTest extends TestCase
 
         $adminUser->roles()->attach( $adminRole );
 
+        $role = factory('App\Role')->create(['name' => 'user']);
 
         for ( $i = 0; $i <= 3; $i ++ ) {
 
             $user = factory('App\User')->create();
-
-            $role = factory('App\Role')->create(['name' => 'user']);
 
             $user->roles()->attach( $role );
         }
@@ -289,9 +287,8 @@ class UsersControllerTest extends TestCase
         $regularUser->roles()->attach( $regularRole );
 
         $anotherRegularUser = factory('App\User')->create();
-        $anotherRegularRole = factory('App\Role')->create(['name' => 'user']);
 
-        $anotherRegularUser->roles()->attach( $anotherRegularRole );
+        $anotherRegularUser->roles()->attach( $regularRole );
 
         $name = $this->faker->name;
         $email = $this->faker->unique()->safeEmail;
@@ -381,9 +378,8 @@ class UsersControllerTest extends TestCase
         $regularUser->roles()->attach( $regularRole );
 
         $anotherRegularUser = factory('App\User')->create();
-        $anotherRegularRole = factory('App\Role')->create(['name' => 'user']);
 
-        $anotherRegularUser->roles()->attach( $anotherRegularRole );
+        $anotherRegularUser->roles()->attach( $regularRole );
         
         $response = $this->actingAs($regularUser)->delete('/users/'.$anotherRegularUser->id);
 

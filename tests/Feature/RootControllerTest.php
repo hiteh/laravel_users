@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RootControllerTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * Create a new test instance.
      *
