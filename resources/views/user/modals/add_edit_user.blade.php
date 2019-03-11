@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            <div id="role-form-component" class="form-group row">
+            <div id="roles" class="form-group row">
                 <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('users.role') }}</label>
                 <div class="col-md-6">
                     <select required name="role" id="role" class="form-control">
