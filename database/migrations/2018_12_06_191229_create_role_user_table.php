@@ -38,28 +38,31 @@ class CreateRoleUserTable extends Migration
     private function postCreate()
     {
         //create basic roles
-        if ( ! Role::where('name', 'root')->first() )
+        if ( App::environment('production') )
         {
-            Role::create([
-                'name'        => 'root',
-                'description' => 'role.description_root'
-            ]);
-        }
+            if ( ! Role::where('name', 'root')->first() )
+            {
+                Role::create([
+                    'name'        => 'root',
+                    'description' => 'role.description_root'
+                ]);
+            }
 
-        if ( ! Role::where('name', 'user')->first() )
-        {
-            Role::create([
-                'name'        => 'user',
-                'description' => 'role.description_user'
-            ]);
-        }
+            if ( ! Role::where('name', 'user')->first() )
+            {
+                Role::create([
+                    'name'        => 'user',
+                    'description' => 'role.description_user'
+                ]);
+            }
 
-        if ( ! Role::where('name', 'admin')->first() )
-        {
-            Role::create([
-                'name'        => 'admin',
-                'description' => 'role.description_admin'
-            ]);
+            if ( ! Role::where('name', 'admin')->first() )
+            {
+                Role::create([
+                    'name'        => 'admin',
+                    'description' => 'role.description_admin'
+                ]);
+            }
         }
     }
 }
