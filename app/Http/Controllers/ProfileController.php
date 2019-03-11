@@ -10,6 +10,20 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
+    /**
+     * The validator service instance.
+     *
+     * @var App\Services\UserDataValidationService;
+     */
+    protected $validator;
+
+    /**
+     * The users repository instance.
+     *
+     * @var App/Repositories/UsersRepository;
+     */
+    protected $users;
+
 	/**
      * Create a new controller instance.
      *
@@ -42,7 +56,7 @@ class ProfileController extends Controller
      */
     public function update( Request $request )
     {
-        $data = $this->validator->validateUserData( $request->all(), Auth::user()->id );
+        $data = $this->validator->validateUserCreationData( $request->all(), Auth::user()->id );
         $user = $this->users->updateUser( Auth::user()->id, $data );
 
         return redirect()->route( 'profile' )->with( ['success' => __('profile.update_success_msg') ] );
