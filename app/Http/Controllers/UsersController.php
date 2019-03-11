@@ -10,8 +10,29 @@ use App\Interfaces\UserDataValidationInterface;
 
 class UsersController extends Controller
 {
+    /**
+     * The validator service instance.
+     *
+     * @var App\Services\UserDataValidationService;
+     */
+    protected $validator;
 
-	/**
+    /**
+     * The users repository instance.
+     *
+     * @var App/Repositories/UsersRepository;
+     */
+    protected $users;
+
+    /**
+     * The roles repository instance.
+     *
+     * @var App/Repositories/RolesRepository;
+     */
+    protected $roles;
+
+
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -47,7 +68,7 @@ class UsersController extends Controller
     {
         if ( Gate::allows( 'create-user' ) )
         {
-            $data = $this->validator->validateUserData( $request->all() );
+            $data = $this->validator->validateUserCreationData( $request->all() );
             $user = $this->users->addUser( $data );
 
             return redirect()->route('users')->with( ['success' => __( 'users.user_created_msg', [ 'name' => $user->name ] )] );
@@ -67,7 +88,7 @@ class UsersController extends Controller
     {        
         if ( Gate::allows( 'update-user',$id ) ) 
         {
-            $data = $this->validator->validateUserData( $request->all(), $id );
+            $data = $this->validator->validateUserCreationData( $request->all(), $id );
             $user = $this->users->updateUser( $id, $data );
 
             return redirect()->route( 'users' )->with( ['success' => __( 'users.user_updated_msg', ['name' => $user->name] )] );
