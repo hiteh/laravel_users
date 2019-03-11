@@ -2,27 +2,31 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
-use App\Role;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Interfaces\UsersRepositoryInterface;
+use App\Interfaces\UserDataValidationInterface;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
 
     use RegistersUsers;
+
+    /**
+     * The validator service instance.
+     *
+     * @var App\Services\UserDataValidationService;
+     */
+    protected $validator;
+
+    /**
+     * The users repository instance.
+     *
+     * @var App/Repositories/UsersRepository;
+     */
+    protected $users;
 
     /**
      * Where to redirect users after registration.
@@ -36,24 +40,11 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( UsersRepositoryInterface $users, UserDataValidationInterface $validator )
     {
         $this->middleware('guest');
-    }
-
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
-        ]);
+        $this->users = $users;
+        $this->validator = $validator;
     }
 
     /**
@@ -64,60 +55,29 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        if ( ! User::all()->first() ) 
-        {
-            // create basic roles
-            if ( ! Role::where('name', 'root')->first() )
-            {
-                Role::create([
-                    'name'        => 'root',
-                    'description' => 'role.description_root'
-                ]);
-            }
+        $this->users->hasAnyUser() ? $data['role'] = 'user' : $data['role'] = 'root';
 
-            if ( ! Role::where('name', 'user')->first() ) 
-            {
-                Role::create([
-                    'name'        => 'user',
-                    'description' => 'role.description_user'
-                ]);
-            }
+        $user = $this->users->addUser( $data );
 
-            if ( ! Role::where('name', 'admin')->first() ) 
-            {
-                Role::create([
-                    'name'        => 'admin',
-                    'description' => 'role.description_admin'
-                ]);
-            }
+        return $user;
+    }
 
-            // create first root user
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-            ]);
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+        $data = $this->validator->validateUserRegistrationData( $request->all() );
 
+        event( new Registered( $user = $this->create( $data ) ) );
 
-            $user->roles()->attach( Role::where('name', 'root')->first() );
+        $this->guard()->login( $user );
 
-            return $user;
-
-        }
-        else 
-        {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-            ]);
-
-
-            $user->roles()->attach( Role::where('name', 'user')->first() );
-
-            return $user;
-        }
-
+        return $this->registered( $request, $user )
+                        ?: redirect($this->redirectPath());
     }
 
     /**
@@ -126,13 +86,13 @@ class RegisterController extends Controller
      * @param App\User $user
      * @return \Illuminate\Http\Response
      */
-    public function showRegistrationForm( User $user )
+    public function showRegistrationForm()
     {
-        if ( $user->all()->first() )
+        if ( $this->users->hasAnyUser() )
         {
             return view('auth.register');
         } else {
-            return redirect('/');
+            return redirect()->route('root');
         }
     }
 }
