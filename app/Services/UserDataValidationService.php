@@ -19,7 +19,7 @@ class UserDataValidationService implements UserDataValidationInterface
         $this->roles = $roles;
     }
 
-	public function validateUserData( array $data, string $id = null )
+	public function validateUserCreationData( array $data, string $id = null )
 	{
 		$user =  Validator::make( $data, [
             'name'     => ['sometimes','required', 'string', 'max:255'],
@@ -31,4 +31,21 @@ class UserDataValidationService implements UserDataValidationInterface
 
         return $user->validate();
 	}
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    public function validateUserRegistrationData(array $data)
+    {
+        $user =  Validator::make($data, [
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+
+        return $user->validate();
+    }
 }

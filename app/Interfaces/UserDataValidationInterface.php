@@ -5,6 +5,8 @@ namespace App\Interfaces;
 
 interface UserDataValidationInterface 
 {
-	public function validateUserData( array $data, string $id );
+	public function validateUserCreationData( array $data, string $id );
+
+	public function validateUserRegistrationData( array $data );
 
 }
