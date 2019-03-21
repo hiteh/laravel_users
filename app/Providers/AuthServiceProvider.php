@@ -26,42 +26,35 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::define( 'create-user', function( $user ) {
-            $root =  $user->roles()->where( 'name', 'root' )->exists();
-            $admin = $user->roles()->where( 'name', 'admin' )->exists();
-
-            return $root || $admin;
+        Gate::define( 'create-user', function ( $user ) {
+            return $user->hasRole('root') || $user->hasRole('admin');
         } );
 
-        Gate::define( 'delete-user', function( $user, $id ) {
+        Gate::define( 'delete-user', function ( $user, $id ) {
 
             if ( User::all()->find( $id ) ) 
             {
                 $self = $user->id == $id;
-                $root =  $user->roles()->where( 'name', 'root' )->exists();
-                $admin = $user->roles()->where( 'name', 'admin' )->exists();
                 $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
                 $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
 
-                return ! $self && ( $root || $admin ) && ! $target_is_root && ! ( $admin && $target_is_admin );
+                return ! $self && ( $user->hasRole('root') || $user->hasRole('admin') ) && ! $target_is_root && ! ( $user->hasRole('admin') && $target_is_admin );
             }
 
             return false;
 
         } );
 
-        Gate::define( 'update-user', function( $user, $id ) {
+        Gate::define( 'update-user', function ( $user, $id ) {
 
             if ( User::all()->find( $id ) )
             {
                 $self = $user->id == $id;
-                $root =  $user->roles()->where( 'name', 'root' )->exists();
-                $admin = $user->roles()->where( 'name', 'admin' )->exists();
                 $target_is_root = User::all()->find( $id )->roles()->where( 'name', 'root' )->exists();
                 $target_is_admin = User::all()->find( $id )->roles()->where( 'name', 'admin' )->exists();
 
 
-                return $root || ( $admin && ! $target_is_root && ! ( $admin && $target_is_admin && ! $self ) );
+                return $user->hasRole('root') || ( $user->hasRole('admin') && ! $target_is_root && ! ( $user->hasRole('admin') && $target_is_admin && ! $self ) );
             }
 
             return false;
