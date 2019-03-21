@@ -38,7 +38,7 @@ class CreateRoleUserTable extends Migration
     private function postCreate()
     {
         //create basic roles
-        if ( App::environment('production') )
+        if ( App::environment('production') || App::environment('local') )
         {
             if ( ! Role::where('name', 'root')->first() )
             {
