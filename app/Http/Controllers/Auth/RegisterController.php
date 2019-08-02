@@ -5,21 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Interfaces\UsersRepositoryInterface;
-use App\Interfaces\UserDataValidationInterface;
-use Illuminate\Http\Request;
+use App\Http\Requests\RegisterUser;
 use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
 
     use RegistersUsers;
-
-    /**
-     * The validator service instance.
-     *
-     * @var App\Services\UserDataValidationService;
-     */
-    protected $validator;
 
     /**
      * The users repository instance.
@@ -40,11 +32,10 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct( UsersRepositoryInterface $users, UserDataValidationInterface $validator )
+    public function __construct( UsersRepositoryInterface $users )
     {
         $this->middleware('guest');
         $this->users = $users;
-        $this->validator = $validator;
     }
 
     /**
@@ -68,9 +59,9 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(Request $request)
+    public function register(RegisterUser $request)
     {
-        $data = $this->validator->validateUserRegistrationData( $request->all() );
+        $data = $request->validated();
 
         event( new Registered( $user = $this->create( $data ) ) );
 

@@ -71,6 +71,10 @@
                 font-weight: bold;
                 cursor: pointer;
             }
+            .invalid-feedback {
+                font-size: 0.8rem;
+                color: #ff8080;
+            }
             input {
                 padding: 0.3rem;
                 border-radius: 0.2rem;
@@ -114,6 +118,11 @@
                             <div>
                                 <input id="name" type="text" name="name" value="" required autofocus>
                             </div>
+                            @if ($errors->has('name'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('name') }}</strong>
+                                </span>
+                            @endif
                         </div>
 
                         <div>
@@ -121,6 +130,11 @@
                             <div>
                                 <input id="email" type="email" name="email" value="" required>
                             </div>
+                            @if ($errors->has('email'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('email') }}</strong>
+                                </span>
+                            @endif
                         </div>
 
                         <div>
@@ -128,6 +142,11 @@
                             <div>
                                 <input id="password" type="password" name="password" value="" required>
                             </div>
+                            @if ($errors->has('password'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('password') }}</strong>
+                                </span>
+                            @endif
                         </div>
 
                         <div>

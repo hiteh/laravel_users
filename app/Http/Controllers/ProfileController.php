@@ -3,20 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateProfile;
 use App\Http\Controllers\Controller;
-use App\Interfaces\UserDataValidationInterface;
 use App\Interfaces\UsersRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    /**
-     * The validator service instance.
-     *
-     * @var App\Services\UserDataValidationService;
-     */
-    protected $validator;
-
     /**
      * The users repository instance.
      *
@@ -29,11 +22,10 @@ class ProfileController extends Controller
      *
      * @return void
      */
-    public function __construct( UserDataValidationInterface $validator, UsersRepositoryInterface $users )
+    public function __construct( UsersRepositoryInterface $users )
     {
     	$this->middleware( 'auth' );
         $this->middleware( 'profile' );
-        $this->validator = $validator;
         $this->users = $users;
     }
     
@@ -54,9 +46,9 @@ class ProfileController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function update( Request $request )
+    public function update( UpdateProfile $request )
     {
-        $data = $this->validator->validateUserCreationData( $request->all(), Auth::user()->id );
+        $data = $request->validated();
         $user = $this->users->updateUser( Auth::user()->id, $data );
 
         return redirect()->route( 'profile' )->with( ['success' => __('profile.update_success_msg') ] );

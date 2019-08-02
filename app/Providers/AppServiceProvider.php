@@ -25,6 +25,5 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind( 'App\Interfaces\UsersRepositoryInterface', 'App\Repositories\UsersRepository' );
         $this->app->bind( 'App\Interfaces\RolesRepositoryInterface', 'App\Repositories\RolesRepository' );
-        $this->app->bind( 'App\Interfaces\UserDataValidationInterface', 'App\Services\UserDataValidationService' );
     }
 }

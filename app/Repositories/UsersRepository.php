@@ -60,6 +60,7 @@ class UsersRepository implements UsersRepositoryInterface
 		$user = $this->getUserById( $id );
 
         $user->roles()->detach();
+        Storage::delete( 'public/'. $user->avatar );
         $user->delete();
 
         return $user;
@@ -86,7 +87,7 @@ class UsersRepository implements UsersRepositoryInterface
             {
                 $value->store('public');
 
-                Storage::delete( 'public/'.$user->avatar );
+                Storage::delete( 'public/'. $user->avatar );
 
                 $user->update([
                     'avatar' => $value->hashName(),

@@ -3,20 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\CreateUser;
+use App\Http\Requests\UpdateUser;
 use Illuminate\Support\Facades\Gate;
 use App\Interfaces\UsersRepositoryInterface;
 use App\Interfaces\RolesRepositoryInterface;
-use App\Interfaces\UserDataValidationInterface;
+
 
 class UsersController extends Controller
 {
-    /**
-     * The validator service instance.
-     *
-     * @var App\Services\UserDataValidationService;
-     */
-    protected $validator;
-
     /**
      * The users repository instance.
      *
@@ -37,13 +32,12 @@ class UsersController extends Controller
      *
      * @return void
      */
-    public function __construct( UsersRepositoryInterface $users, RolesRepositoryInterface $roles, UserDataValidationInterface $validator )
+    public function __construct( UsersRepositoryInterface $users, RolesRepositoryInterface $roles )
     {
         $this->middleware( 'auth' );
         $this->middleware( 'admin' );
         $this->users = $users;
         $this->roles = $roles;
-        $this->validator = $validator;
     }
     /**
      * Display a listing of the resource.
@@ -64,11 +58,11 @@ class UsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store( Request $request )
+    public function store( CreateUser $request )
     {
         if ( Gate::allows( 'create-user' ) )
         {
-            $data = $this->validator->validateUserCreationData( $request->all() );
+            $data = $request->validated();
             $user = $this->users->addUser( $data );
 
             return redirect()->route('users')->with( ['success' => __( 'users.user_created_msg', [ 'name' => $user->name ] )] );
@@ -84,11 +78,11 @@ class UsersController extends Controller
      * @param  string  $id
      * @return \Illuminate\Http\Response
      */
-    public function update( $id, Request $request )
+    public function update( $id, UpdateUser $request )
     {        
-        if ( Gate::allows( 'update-user',$id ) ) 
+        if ( Gate::allows( 'update-user', $id ) ) 
         {
-            $data = $this->validator->validateUserCreationData( $request->all(), $id );
+            $data = $request->validated();
             $user = $this->users->updateUser( $id, $data );
 
             return redirect()->route( 'users' )->with( ['success' => __( 'users.user_updated_msg', ['name' => $user->name] )] );
