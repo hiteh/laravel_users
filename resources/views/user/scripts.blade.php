@@ -65,9 +65,9 @@
                 
                 return function ( event ) {
                     form.user.id = $(this).data('user-id') || ''
-                    form.user.name = $(this).data('user-name').trim() || ''
-                    form.user.email = $(this).data('user-email').trim() || ''
-                    form.user.role = $(this).data('user-role').trim() || ''
+                    form.user.name = $(this).data('user-name') ? $(this).data('user-name').trim() : ''
+                    form.user.email = $(this).data('user-email') ? $(this).data('user-email').trim() : ''
+                    form.user.role = $(this).data('user-role') ? $(this).data('user-role').trim() : ''
                     form.title = title
                     form.action = action.trim().replace('id', form.user.id)
                     form.method = method  || ''
