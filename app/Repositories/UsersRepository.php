@@ -131,9 +131,9 @@ class UsersRepository extends CrudableRepository implements UsersRepositoryInter
      */
     private function updateAvatar( User $user, $avatar )
     {
-        $avatar->store('public');
-        Storage::delete( 'public/'. $user->avatar );
-        return $avatar->hashName();
+        $avatar->store('public'); // Store new avatar file.
+        Storage::delete( 'public/'. $user->avatar ); // Remove old avatar file.
+        return $avatar->hashName(); // Return new avatar file hash.
     }
     
     /**
@@ -146,11 +146,12 @@ class UsersRepository extends CrudableRepository implements UsersRepositoryInter
     protected function updateBefore( $data )
     {
         extract( $data );
+
         if( isset( $avatar ) )
-        {
+        {   // Replace avatar file with file hash.
             $data['avatar'] = $this->updateAvatar( Auth::user(), $avatar );
         }
-
+        // Return data for further processing.
         return $data;
     }
 
@@ -165,7 +166,7 @@ class UsersRepository extends CrudableRepository implements UsersRepositoryInter
     {
         $instance = $this->instance;
         extract( $data = array_filter( $data ) );
-        isset( $role ) && ! $this->instance->hasRole( 'root' ) ? $this->setRole( $instance, $role ) : $instance;
+        isset( $role ) ? $this->setRole( $instance, $role ) : $instance;
         isset( $password ) ? $this->updatePassword( $instance, $password ) : $instance;
 
         return $instance;
@@ -181,9 +182,9 @@ class UsersRepository extends CrudableRepository implements UsersRepositoryInter
     {
         if( ! $this->hasAny() )
         {
-            $data['role'] = 'root';
+            $data['role'] = 'root'; // If there are no users, set first user's role as root.
         }
-
+        // Return data for further processing.
         return $data;
     }
 
@@ -198,7 +199,7 @@ class UsersRepository extends CrudableRepository implements UsersRepositoryInter
     {
         $instance = $this->instance;
         extract( $data = array_filter( $data ) );
-        isset( $role ) && ! $this->instance->hasRole( 'root' ) ? $this->setRole( $instance, $role ) : $instance;
+        isset( $role ) ? $this->setRole( $instance, $role ) : $instance;
         isset( $password ) ? $this->updatePassword( $instance, $password ) : $instance; 
 
         return $instance;
@@ -212,7 +213,9 @@ class UsersRepository extends CrudableRepository implements UsersRepositoryInter
      */
     protected function deleteBefore( $id )
     {
-        $this->fetch( $id )->roles()->detach();
+        $user = $this->fetch( $id );
+        $user->roles()->detach(); // Detach user's role.
+        Storage::delete( 'public/'. $user->avatar ); // Remove user's avatar.
 
         return $id;
     }
