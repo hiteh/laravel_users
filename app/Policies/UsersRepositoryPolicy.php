@@ -18,13 +18,13 @@ class UsersRepositoryPolicy
      */
     public function view( User $user, User $model )
     {
-        if( isset( request()->id ) && ! ( $user->hasRole( 'root' ) || $user->hasRole( 'admin' ) ) )
+        if( isset( request()->id ) ) // Every user can see his/her own profile.
         {
             $target = $model->all()->find( request()->id );
             return isset( $target ) && $user->id === $target->id;
         }
 
-        return $user->hasRole('root') || $user->hasRole('admin');
+        return $user->hasRole('root') || $user->hasRole('admin'); // Only root or admin can see all users.
     }
 
     /**
@@ -50,20 +50,20 @@ class UsersRepositoryPolicy
         $targetId = request()->id;
         $targetRole = request()->get('role');
 
-        if( isset( $targetId ) ) // User's id can't be undefined
+        if( isset( $targetId ) ) // User's id must exist.
         {
             $target = $model->all()->find( $targetId );
 
-            if( isset( $target ) && $user->id === $target->id ) // User can edit his/her own data
+            if( isset( $target ) && $user->id === $target->id ) // User can edit his/her own data.
             {
-                if( isset( $targetRole ) && ! $target->hasRole( $targetRole ) ) { return false; } // User can't change his/her own role
+                if( isset( $targetRole ) && ! $target->hasRole( $targetRole ) ) { return false; } // User can't change his/her own role.
                 return true;
             }
 
             if( $user->hasRole( 'root' ) || $user->hasRole( 'admin' ) )
             {
-                if( $user->hasRole( 'admin' ) && $target->hasRole( 'root' ) ) { return false; } // Admin can't change root's role
-                if( $user->hasRole( 'admin' ) && $target->hasRole( 'admin' ) ) { return false; } // Admin can't change another admin's role
+                if( $user->hasRole( 'admin' ) && $target->hasRole( 'root' ) ) { return false; } // Admin can't change root user data.
+                if( $user->hasRole( 'admin' ) && $target->hasRole( 'admin' ) ) { return false; } // Admin can't change another admin's data.
                 if( $target->hasRole( 'root') && isset( $targetRole ) && 'root' !== $targetRole ) { return false; } // Nobody can change root's role
                 return true;
             }    
@@ -81,9 +81,17 @@ class UsersRepositoryPolicy
      */
     public function delete( User $user, User $model )
     {
-        $target = $model->all()->find( request()->id );
+        $targetId = request()->id;
+        $target = $model->all()->find( $targetId );
 
-        return ! ( $user->id === $target->id )  && ! $target->hasRole( 'root' ) && ! ( $user->hasRole( 'admin' ) && $target->hasRole( 'admin' ) );
+        if( $user->id === $targetId ) { return false; } // User cant remove himself/herself.
+        if( $target->hasRole( 'root' ) ) { return false; } // Root user can't be removed.
+        if( $user->hasRole( 'admin' ) && $target->hasRole( 'admin' ) ) { return false; } // Admin can't remove another admin.
+        if( $user->hasRole( 'root' ) || $target->hasRole( 'admin' ) ) 
+        {
+            return true;
+        }
+        return false;
     }
 
     /**
