@@ -14,13 +14,13 @@ class LangController extends Controller
      */
     public function store( Request $request )
     {
-    	// Check if language switch form is send
+    	// Check if language switch form was send.
     	if( $request->isMethod('post') && $request->get('lang') )
     	{	
-    		//Set session language
+    		//Set session language.
     		$request->session()->put('lang', $request->get('lang'));
     	}
-        // redirect back
+        // redirect back.
         return redirect()->back();
     }
 
