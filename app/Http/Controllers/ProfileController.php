@@ -49,7 +49,7 @@ class ProfileController extends Controller
     public function update( UpdateProfile $request )
     {
         $data = $request->validated();
-        $user = $this->users->updateUser( Auth::user()->id, $data );
+        $user = $this->users->update( $data, Auth::user()->id );
 
         return redirect()->route( 'profile' )->with( ['success' => __('profile.update_success_msg') ] );
     }

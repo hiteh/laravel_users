@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Validation\Rule;
-use App\Interfaces\RolesRepositoryInterface;
+use App\Interfaces\UsersRepositoryInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUser extends FormRequest
@@ -23,16 +23,14 @@ class UpdateUser extends FormRequest
      *
      * @return array
      */
-    public function rules( RolesRepositoryInterface $roles, Rule $rule )
+    public function rules( UsersRepositoryInterface $users, Rule $rule )
     {
-        $id = $this->route()->parameter('id');
-
         return [
             'name'     => ['sometimes','required', 'string', 'max:255'],
-            'email'    => ['sometimes','required', 'string', 'email', 'max:255', 'unique:users,email,'.$id ],
+            'email'    => ['sometimes','required', 'string', 'email', 'max:255', 'unique:users,email,'. $this->route()->parameter('id') ],
             'password' => ['sometimes','required', 'string', 'min:8', 'confirmed'],
-            'role'     => ['sometimes','required', 'string', $rule->in( $roles->getAvailableRolesList() ) ],
-            'avatar'   => ['sometimes', 'required', 'image'],
+            'role'     => ['sometimes','required', 'string', $rule->in( $users->roles()->pluck('name') ) ],
+            'avatar'   => ['sometimes','required', 'image'],
         ];
     }
 }

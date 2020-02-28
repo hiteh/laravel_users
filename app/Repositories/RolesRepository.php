@@ -1,18 +1,16 @@
 <?php
 
 namespace App\Repositories;
-use App\Interfaces\RolesRepositoryInterface;
+
 use App\Role;
+use App\Abstracts\CrudableRepository;
+use App\Interfaces\RolesRepositoryInterface;
 
-class RolesRepository implements RolesRepositoryInterface
+
+class RolesRepository extends CrudableRepository implements RolesRepositoryInterface
 {
-	public function getAvailableRolesList()
+	public function __construct( Role $role )
 	{
-		return Role::where( 'name','<>','root' )->pluck( 'name' );
-	}
-
-	public function getRoleByName( string $name )
-	{
-		return Role::where( 'name', $name )->first();
+		$this->model = $role;
 	}
 }

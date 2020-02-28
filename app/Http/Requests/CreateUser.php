@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Validation\Rule;
-use App\Interfaces\RolesRepositoryInterface;
+use App\Interfaces\UsersRepositoryInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateUser extends FormRequest
@@ -23,13 +23,13 @@ class CreateUser extends FormRequest
      *
      * @return array
      */
-    public function rules( RolesRepositoryInterface $roles )
+    public function rules( UsersRepositoryInterface $users, Rule $rule )
     {
         return [
             'name'     => ['sometimes','required', 'string', 'max:255'],
             'email'    => ['sometimes','required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['sometimes','required', 'string', 'min:8', 'confirmed'],
-            'role'     => ['sometimes','required', 'string', Rule::in( $roles->getAvailableRolesList() ) ],
+            'role'     => ['sometimes','required', 'string', $rule->in( $users->roles()->pluck('name') ) ],
             'avatar'   => ['sometimes', 'required', 'image'],
         ];
     }

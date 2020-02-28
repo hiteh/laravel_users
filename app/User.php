@@ -35,21 +35,11 @@ class User extends Authenticatable
      */
     public function roles()
     {
-        return $this->belongsToMany(Role::class);
-    }
-
-    /**
-     * Check if user is root.
-     *
-     * @return bool
-     */
-    public function isRoot()
-    {
-        return $this->roles()->where( 'name', 'root' )->exists();
+        return $this->belongsToMany( Role::class );
     }
 
     public function hasRole( string $name )
     {
-        return $this->roles()->where( 'name', $name );
+        return $this->roles()->where( 'name', $name )->exists();
     }
 }

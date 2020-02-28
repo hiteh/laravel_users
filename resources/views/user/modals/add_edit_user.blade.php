@@ -26,7 +26,6 @@
                     <input id="email" type="email" class="form-control" name="email" value="" required>
                 </div>
             </div>
-
             <div id="roles" class="form-group row">
                 <label for="role" class="col-md-4 col-form-label text-md-right">{{ __('users.role') }}</label>
                 <div class="col-md-6">

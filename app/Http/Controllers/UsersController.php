@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\CreateUser;
 use App\Http\Requests\UpdateUser;
 use Illuminate\Support\Facades\Gate;
 use App\Interfaces\UsersRepositoryInterface;
-use App\Interfaces\RolesRepositoryInterface;
-
 
 class UsersController extends Controller
 {
@@ -32,25 +32,41 @@ class UsersController extends Controller
      *
      * @return void
      */
-    public function __construct( UsersRepositoryInterface $users, RolesRepositoryInterface $roles )
+    public function __construct( UsersRepositoryInterface $users )
     {
         $this->middleware( 'auth' );
-        $this->middleware( 'admin' );
-        $this->users = $users;
-        $this->roles = $roles;
+        $this->repository = $users;
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function index( Request $request, User $user, $id = null )
     {
+
+        $this->authorize( 'view', $user );   
+
+        if( isset( $id ) )
+        {
+            $this->repository->read( $id );
+            $message = $this->repository->response();
+            extract( $message );
+            $view = isset( $success ) ? view( 'user.profile', ['data' => $success->toArray()] ) : $message;
+
+            return isset( $error ) || isset( $warning ) ? abort( 404,'Page not found' ) : $view;
+        }
+
+        $users = $this->repository->paginated( 5, $request->query(), $request->url(), 'id' );
+        $roles = $this->repository->roles()->pluck( 'name', 'name' );
+
         return view( 'user.users', [
-            'users' => $this->users->getAllUsers(),
-        	'roles' => $this->roles->getAvailableRolesList(),
-    	] );
+            'data' => $users,
+            'roles' => $roles,
+        ] );
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -58,17 +74,17 @@ class UsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store( CreateUser $request )
+    public function store( CreateUser $request, User $user )
     {
-        if ( Gate::allows( 'create-user' ) )
-        {
-            $data = $request->validated();
-            $user = $this->users->addUser( $data );
 
-            return redirect()->route('users')->with( ['success' => __( 'users.user_created_msg', [ 'name' => $user->name ] )] );
-        }
+        $this->authorize( 'create', $user );
+        $data = $request->validated();
+        $this->repository->create( $data );
+        $response = $this->repository->response();
+        extract( $response );
+        $response = isset( $success ) ? ['success' => __( 'messages.user_created_msg', ['name' => $success->name] )] : $response;
 
-        return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
+        return isset( $error ) ? redirect()->back()->withErrors( $response ) : redirect()->back()->with( $response );
     }
 
     /**
@@ -78,17 +94,16 @@ class UsersController extends Controller
      * @param  string  $id
      * @return \Illuminate\Http\Response
      */
-    public function update( $id, UpdateUser $request )
-    {        
-        if ( Gate::allows( 'update-user', $id ) ) 
-        {
-            $data = $request->validated();
-            $user = $this->users->updateUser( $id, $data );
+    public function update( $id, UpdateUser $request, User $user )
+    {   
+        $this->authorize( 'update', $user );
+        $data = $request->validated();
+        $this->repository->update( $data, $id );
+        $response = $this->repository->response();
+        extract( $response );
+        $response = isset( $success ) ? ['success' => __( 'messages.user_updated_msg', ['name' => $success->name] )] : $response;
 
-            return redirect()->route( 'users' )->with( ['success' => __( 'users.user_updated_msg', ['name' => $user->name] )] );
-        }
-
-        return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
+        return isset( $error ) ? redirect()->back()->withErrors( $response ) : redirect()->back()->with( $response );
     }
 
     /**
@@ -97,16 +112,14 @@ class UsersController extends Controller
      * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy( $id )
+    public function destroy( $id, User $user )
     {
-        if ( Gate::allows( 'delete-user', $id ) )
-        {
-            $user = $this->users->deleteUser( $id );
+        $this->authorize( 'delete', $user );
+        $this->repository->delete( $id );
+        $response = $this->repository->response();
+        extract( $response );
+        $response = isset( $success ) ? ['success' => __( 'messages.user_deleted_msg', [ 'name' => $success->name ] )] : $response;
 
-            return redirect()->route( 'users' )->with( ['success' => __( 'users.user_deleted_msg', ['name' => $user->name ] )] );
-        }
-
-        return redirect()->route( 'users' )->with( ['warning' => __( 'users.forbidden_operation_msg' )] );
-
+        return isset( $error ) ? redirect()->back()->withErrors( $response ) : redirect()->back()->with( $response );
     }
 }

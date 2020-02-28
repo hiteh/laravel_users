@@ -32,7 +32,7 @@ class RootController extends Controller
      */
     public function index()
     {
-        if ( $this->users->hasAnyUser() )
+        if ( $this->users->hasAny() )
         {
             return view('root');
         } else {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use App\Interfaces\UsersRepositoryInterface;
@@ -35,22 +36,7 @@ class RegisterController extends Controller
     public function __construct( UsersRepositoryInterface $users )
     {
         $this->middleware('guest');
-        $this->users = $users;
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\User
-     */
-    protected function create(array $data)
-    {
-        $this->users->hasAnyUser() ? $data['role'] = 'user' : $data['role'] = 'root';
-
-        $user = $this->users->addUser( $data );
-
-        return $user;
+        $this->repository = $users;
     }
 
     /**
@@ -59,16 +45,28 @@ class RegisterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function register(RegisterUser $request)
+    public function register( RegisterUser $request )
     {
         $data = $request->validated();
+        $data['role'] = 'user';
+        $this->repository->create( $data );
+        $response = $this->repository->response();
+        extract( $response );
 
-        event( new Registered( $user = $this->create( $data ) ) );
-
-        $this->guard()->login( $user );
-
-        return $this->registered( $request, $user )
+        if( isset( $success ) )
+        {
+            event( new Registered( $success ) );
+            $this->guard()->login( $success );
+            return $this->registered( $request, $success )
                         ?: redirect($this->redirectPath());
+        }
+
+        if( isset( $error ) )
+        {
+            redirect()->back()->withErrors( $error );
+        }
+
+
     }
 
     /**
@@ -79,11 +77,6 @@ class RegisterController extends Controller
      */
     public function showRegistrationForm()
     {
-        if ( $this->users->hasAnyUser() )
-        {
-            return view('auth.register');
-        } else {
-            return redirect()->route('root');
-        }
+        return $this->repository->hasAny() ? view('auth.register') : redirect()->route('root');
     }
 }

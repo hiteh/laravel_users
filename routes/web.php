@@ -20,7 +20,7 @@ Route::middleware(['lang'])->group(function () {
 	Route::patch('/profile-update', 'ProfileController@update')->name('profile.update');
 	// Users
 		//Show
-	Route::get('/users', 'UsersController@index')->name('users');
+	Route::get('/users/{id?}', 'UsersController@index')->name('users');
 		//Add
 	Route::post('/users', 'UsersController@store')->name('users.store');
 		//Edit

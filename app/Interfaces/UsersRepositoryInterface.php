@@ -5,15 +5,19 @@ namespace App\Interfaces;
 
 interface UsersRepositoryInterface 
 {
-	public function hasAnyUser();
+	public function hasAny();
 
-	public function getAllUsers( array $order, int $items_per_page );
+	public function response();
 
-	public function getUserById( string $id );
+	public function roles();
 
-	public function addUser( array $data );
+	public function paginated( int $items_per_page, array $query, string $url, string $key );
 
-	public function deleteUser( string $id );
+	public function create( array $data );
 
-	public function updateUser( string $id, array $data );
+	public function read( string $id = null );
+
+	public function update( array $data, string $id );
+
+	public function delete( string $id  );
 }

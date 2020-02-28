@@ -9,14 +9,14 @@
         </button>
       </div>
       <div class="modal-body">
-        <form method="POST" id="profile-form" action="{{ route( 'profile.update' ) }}">
+        <form method="POST" id="profile-form" action="{{ route( 'users.update', $data['id'] ) }}">
             @csrf
             {!!  method_field( 'patch' ) !!}
             <div class="form-group row">
                 <label for="name" class="col-md-4 col-form-label text-md-right">{{ __( 'profile.first_name' ) }}</label>
 
                 <div class="col-md-6">
-                    <input id="name" type="text" class="form-control" name="name" value="{{ $user->name }}" required autofocus>
+                    <input id="name" type="text" class="form-control" name="name" value="{{ $data['name'] }}" required autofocus>
                 </div>
             </div>
 
@@ -24,7 +24,7 @@
                 <label for="email" class="col-md-4 col-form-label text-md-right">{{ __( 'profile.mail' ) }}</label>
 
                 <div class="col-md-6">
-                    <input id="email" type="email" class="form-control" name="email" value="{{ $user->email }}" required>
+                    <input id="email" type="email" class="form-control" name="email" value="{{ $data['email'] }}" required>
                 </div>
             </div>
         </form>

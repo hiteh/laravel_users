@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
-use App\Interfaces\RolesRepositoryInterface;
+use App\Interfaces\UsersRepositoryInterface;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProfile extends FormRequest
@@ -24,15 +24,13 @@ class UpdateProfile extends FormRequest
      *
      * @return array
      */
-    public function rules( RolesRepositoryInterface $roles, Rule $rule )
+    public function rules( UsersRepositoryInterface $users, Rule $rule, Auth $auth )
     {
-        $id = Auth::user()->id;
-
         return [
             'name'     => ['sometimes','required', 'string', 'max:255'],
-            'email'    => ['sometimes','required', 'string', 'email', 'max:255', 'unique:users,email,'.$id ],
+            'email'    => ['sometimes','required', 'string', 'email', 'max:255', 'unique:users,email,'. $auth->user()->id ],
             'password' => ['sometimes','required', 'string', 'min:8', 'confirmed'],
-            'role'     => ['sometimes','required', 'string', $rule->in( $roles->getAvailableRolesList() ) ],
+            'role'     => ['sometimes','required', 'string', $rule->in( $users->roles()->pluck('name') ) ],
             'avatar'   => ['sometimes', 'required', 'image'],
         ];
     }

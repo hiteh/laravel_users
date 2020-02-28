@@ -17,8 +17,8 @@
                 
                 return function ( event ) {
                     data.id = $(this).data('user-id')
-                    data.name = $(this).data('user-name')
-                    data.route = '{{ route('users.destroy', 'id') }}'.replace('id', data.id)
+                    data.name = $(this).data('user-name').trim()
+                    data.route = '{{ route('users.destroy', 'id') }}'.replace('id', data.id).trim()
                 }
              }
              // Updates form action attribute and user's displayed name 
@@ -39,7 +39,7 @@
 
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
-        // Edit od add user
+        // Edit or add user
         (function($) {
             // DOM caching
             const modal = $('#user-modal')
@@ -65,11 +65,11 @@
                 
                 return function ( event ) {
                     form.user.id = $(this).data('user-id') || ''
-                    form.user.name = $(this).data('user-name') || ''
-                    form.user.email = $(this).data('user-email') || ''
-                    form.user.role = $(this).data('user-role') || ''
+                    form.user.name = $(this).data('user-name').trim() || ''
+                    form.user.email = $(this).data('user-email').trim() || ''
+                    form.user.role = $(this).data('user-role').trim() || ''
                     form.title = title
-                    form.action = action.replace('id', form.user.id)
+                    form.action = action.trim().replace('id', form.user.id)
                     form.method = method  || ''
                 }
              }
