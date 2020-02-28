@@ -42,7 +42,7 @@ abstract class CrudableRepository
      */
     public function hasAny()
     {
-        return $this->model->first()->exists();
+        return $this->model->first() ? true : false;
     }
     
     /**
