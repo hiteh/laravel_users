@@ -12,7 +12,7 @@ class LangController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store( Request $request )
+    public function store( Request $request ) // TODO: language request and validation.
     {
     	// Check if language switch form was send.
     	if( $request->isMethod('post') && $request->get('lang') )

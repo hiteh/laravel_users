@@ -51,7 +51,7 @@ class RootControllerTest extends TestCase
      */
     public function testRootControllerReturnsWelcomeView()
     {
-        $this->mock->shouldReceive('hasAnyUser')->once()->andReturn(false);
+        $this->mock->shouldReceive('hasAny')->once()->andReturn(false);
         
         $this->app->instance('App\Interfaces\UsersRepositoryInterface', $this->mock);
 
@@ -67,7 +67,7 @@ class RootControllerTest extends TestCase
      */
     public function testRootControllerReturnsRootView()
     {
-        $this->mock->shouldReceive('hasAnyUser')->once()->andReturn(true);
+        $this->mock->shouldReceive('hasAny')->once()->andReturn(true);
         
         $this->app->instance('App\Interfaces\UsersRepositoryInterface', $this->mock);
 

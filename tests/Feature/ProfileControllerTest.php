@@ -30,16 +30,16 @@ class ProfileControllerTest extends TestCase
     public function testProfileControllerResponse()
     {
         $user = factory('App\User')->create();
-        $role = factory('App\Role')->create(['name' => 'user']);
+        $role = factory('App\Role')->create( ['name' => 'user'] );
         $user->roles()->attach( $role );
 
-        $response = $this->actingAs($user, 'web')->get('profile');
+        $response = $this->actingAs( $user, 'web' )->get('/users' . '/' . $user->id );
 
         $response->assertStatus(200);
 
         $response->assertViewIs('user.profile');
 
-        $response->assertViewHas('user');
+        $response->assertViewHas('data');
     }
 
     /**
@@ -60,7 +60,7 @@ class ProfileControllerTest extends TestCase
         $newPassword = $this->faker->password();
         $newAvatar = UploadedFile::fake()->image('avatar.jpg');
 
-        $response = $this->actingAs($user, 'web')->patch('/profile-update', [
+        $response = $this->actingAs($user, 'web')->patch('/users', [
             'name'                  => $newName,
             'email'                 => $newEmail,
             'password'              => $newPassword,
@@ -74,7 +74,7 @@ class ProfileControllerTest extends TestCase
         ]);
 
         $response->assertStatus(302);
-        $response->assertRedirect('profile');
+        $response->assertRedirect('users');
         $response->assertSessionHas('success');
     }
 }
