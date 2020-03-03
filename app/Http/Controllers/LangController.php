@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App;
+use Illuminate\Http\Request;
+use App\Http\Requests\UpdateLang;
 
 class LangController extends Controller
 {
@@ -12,7 +13,7 @@ class LangController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store( Request $request ) // TODO: language request and validation.
+    public function store( UpdateLang $request )
     {
     	// Check if language switch form was send.
     	if( $request->isMethod('post') && $request->get('lang') )
