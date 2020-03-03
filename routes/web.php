@@ -13,11 +13,6 @@ Route::middleware(['lang'])->group(function () {
 	// Home
 		//Show
 	Route::get('/home', 'HomeController@index')->name('home');
-	// Profile
-		//Show
-	// Route::get('/profile', 'ProfileController@index')->name('profile');
-		//Patch
-	// Route::patch('/profile-update', 'ProfileController@update')->name('profile.update');
 	// Users
 		//Show
 	Route::get('/users/{id?}', 'UsersController@index')->name('users');
