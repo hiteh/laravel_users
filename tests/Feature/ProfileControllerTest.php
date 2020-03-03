@@ -60,7 +60,7 @@ class ProfileControllerTest extends TestCase
         $newPassword = $this->faker->password();
         $newAvatar = UploadedFile::fake()->image('avatar.jpg');
 
-        $response = $this->actingAs($user, 'web')->patch('/users', [
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users' . '/' . $user->id] )->actingAs($user, 'web')->patch('/users' . '/' . $user->id, [
             'name'                  => $newName,
             'email'                 => $newEmail,
             'password'              => $newPassword,
@@ -74,7 +74,7 @@ class ProfileControllerTest extends TestCase
         ]);
 
         $response->assertStatus(302);
-        $response->assertRedirect('users');
+        $response->assertRedirect('/users' . '/' . $user->id );
         $response->assertSessionHas('success');
     }
 }

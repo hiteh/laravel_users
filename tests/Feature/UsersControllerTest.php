@@ -27,29 +27,29 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerResponseForRootUser()
     {
-        $rootUser = factory('App\User')->create();
-        $rootRole = factory('App\Role')->create(['name' => 'root']);
+        $rootUser = factory( 'App\User' )->create();
+        $rootRole = factory( 'App\Role' )->create( ['name' => 'root'] );
 
         $rootUser->roles()->attach( $rootRole );
 
-        $role = factory('App\Role')->create(['name' => 'user']);
+        $role = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         for ( $i = 0; $i <= 3; $i ++ ) {
 
-            $user = factory('App\User')->create();
+            $user = factory( 'App\User' )->create();
 
             $user->roles()->attach( $role );
         }
         
-        $response = $this->actingAs($rootUser, 'web')->get('/users');
+        $response = $this->actingAs( $rootUser, 'web' )->get( '/users' );
 
-        $response->assertStatus(200);
+        $response->assertStatus( 200 );
 
-        $response->assertViewIs('user.users');
+        $response->assertViewIs( 'user.users' );
 
-        $response->assertViewHas('users');
+        $response->assertViewHas( 'data' );
 
-        $response->assertViewHas('roles');
+        $response->assertViewHas( 'roles' );
 
     }
 
@@ -60,29 +60,29 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerResponseForAdminUser()
     {
-        $adminUser = factory('App\User')->create();
-        $adminRole = factory('App\Role')->create(['name' => 'admin']);
+        $adminUser = factory( 'App\User' )->create();
+        $adminRole = factory( 'App\Role' )->create( ['name' => 'admin'] );
 
         $adminUser->roles()->attach( $adminRole );
 
-        $role = factory('App\Role')->create(['name' => 'user']);
+        $role = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         for ( $i = 0; $i <= 3; $i ++ ) {
 
-            $user = factory('App\User')->create();
+            $user = factory( 'App\User' )->create();
 
             $user->roles()->attach( $role );
         }
         
-        $response = $this->actingAs($adminUser, 'web')->get('/users');
+        $response = $this->actingAs( $adminUser, 'web' )->get( '/users' );
 
-        $response->assertStatus(200);
+        $response->assertStatus( 200 );
 
-        $response->assertViewIs('user.users');
+        $response->assertViewIs( 'user.users' );
 
-        $response->assertViewHas('users');
+        $response->assertViewHas( 'data' );
 
-        $response->assertViewHas('roles');
+        $response->assertViewHas( 'roles' );
 
     }
 
@@ -93,16 +93,18 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerResponseForRegularUser()
     {
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         $regularUser->roles()->attach( $regularRole );
         
-        $response = $this->actingAs($regularUser, 'web')->get('/users');
+        $response = $this->actingAs( $regularUser, 'web' )->get( '/users' . '/' . $regularUser->id );
 
-        $response->assertStatus(302);
-        $response->assertSessionMissing('success');
-        $response->assertRedirect('home');
+        $response->assertStatus( 200 );
+        
+        $response->assertViewIs( 'user.profile' );
+
+        $response->assertViewHas( 'data' );
 
     }
 
@@ -113,9 +115,9 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerStoreResponseForRootUser()
     {
-        factory('App\Role')->create(['name' => 'user']);
-        $rootUser = factory('App\User')->create();
-        $rootRole = factory('App\Role')->create(['name' => 'root']);
+        factory( 'App\Role' )->create( ['name' => 'user'] );
+        $rootUser = factory( 'App\User' )->create();
+        $rootRole = factory( 'App\Role' )->create( ['name' => 'root'] );
 
         $rootUser->roles()->attach( $rootRole );
 
@@ -123,22 +125,22 @@ class UsersControllerTest extends TestCase
         $email = $this->faker->unique()->safeEmail;
         $password = $this->faker->password();
 
-        $response = $this->actingAs($rootUser)->post('/users', [
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users'] )->actingAs( $rootUser )->post( '/users', [
             'name'                  => $name,
             'email'                 => $email,
             'role'                  => 'user',
             'password'              => $password,
             'password_confirmation' => $password,
-        ]);
+        ] );
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas( 'users', [
             'name'            => $name,
             'email'           => $email, 
-        ]);
+        ] );
 
-        $response->assertStatus(302);
-        $response->assertRedirect('users');
-        $response->assertSessionHas('success');
+        $response->assertStatus( 302 );
+        $response->assertRedirect( 'users' );
+        $response->assertSessionHas( 'success' );
     }
 
     /**
@@ -148,9 +150,9 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerStoreResponseForAdminUser()
     {
-        factory('App\Role')->create(['name' => 'user']);
-        $adminUser = factory('App\User')->create();
-        $adminRole = factory('App\Role')->create(['name' => 'admin']);
+        factory( 'App\Role' )->create(['name' => 'user']);
+        $adminUser = factory( 'App\User' )->create();
+        $adminRole = factory( 'App\Role' )->create( ['name' => 'admin'] );
 
         $adminUser->roles()->attach( $adminRole );
 
@@ -158,22 +160,22 @@ class UsersControllerTest extends TestCase
         $email = $this->faker->unique()->safeEmail;
         $password = $this->faker->password();
 
-        $response = $this->actingAs($adminUser)->post('/users', [
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users'] )->actingAs( $adminUser )->post('/users', [
             'name'                  => $name,
             'email'                 => $email,
             'role'                  => 'user',
             'password'              => $password,
             'password_confirmation' => $password,
-        ]);
+        ] );
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas( 'users', [
             'name'            => $name,
             'email'           => $email, 
-        ]);
+        ] );
 
-        $response->assertStatus(302);
-        $response->assertRedirect('users');
-        $response->assertSessionHas('success');
+        $response->assertStatus( 302 );
+        $response->assertRedirect( 'users' );
+        $response->assertSessionHas( 'success' );
     }
 
     /**
@@ -183,16 +185,15 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerStoreResponseForRegularUser()
     {
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create(['name' => 'user']);
 
         $regularUser->roles()->attach( $regularRole );
         
-        $response = $this->actingAs($regularUser, 'web')->post('/users');
+        $response = $this->actingAs( $regularUser, 'web' )->post( '/users' );
 
-        $response->assertStatus(302);
-        $response->assertSessionMissing('success');
-        $response->assertRedirect('home');
+        $response->assertStatus( 403 );
+        $response->assertSessionMissing( 'success' );
 
     }
 
@@ -203,13 +204,13 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerUpdateResponseForRootUser()
     {
-        $rootUser = factory('App\User')->create();
-        $rootRole = factory('App\Role')->create(['name' => 'root']);
+        $rootUser = factory( 'App\User' )->create();
+        $rootRole = factory( 'App\Role' )->create( ['name' => 'root'] );
 
         $rootUser->roles()->attach( $rootRole );
 
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         $regularUser->roles()->attach( $regularRole );
 
@@ -217,22 +218,22 @@ class UsersControllerTest extends TestCase
         $email = $this->faker->unique()->safeEmail;
         $password = $this->faker->password();
 
-        $response = $this->actingAs($rootUser)->patch('/users/'.$regularUser->id, [
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users'] )->actingAs( $rootUser )->patch( '/users'. '/' . $regularUser->id, [
             'name'                  => $name,
             'email'                 => $email,
             'role'                  => 'user',
             'password'              => $password,
             'password_confirmation' => $password,
-        ]);
+        ] );
 
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas( 'users', [
             'name'            => $name,
             'email'           => $email, 
-        ]);
+        ] );
 
-        $response->assertStatus(302);
-        $response->assertRedirect('users');
-        $response->assertSessionHas('success');
+        $response->assertStatus( 302 );
+        $response->assertRedirect( 'users' );
+        $response->assertSessionHas( 'success' );
     }
 
     /**
@@ -242,13 +243,13 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerUpdateResponseForAdminUser()
     {
-        $adminUser = factory('App\User')->create();
-        $adminRole = factory('App\Role')->create(['name' => 'admin']);
+        $adminUser = factory( 'App\User' )->create();
+        $adminRole = factory( 'App\Role' )->create( ['name' => 'admin'] );
 
         $adminUser->roles()->attach( $adminRole );
 
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         $regularUser->roles()->attach( $regularRole );
 
@@ -256,7 +257,7 @@ class UsersControllerTest extends TestCase
         $email = $this->faker->unique()->safeEmail;
         $password = $this->faker->password();
 
-        $response = $this->actingAs($adminUser)->patch('/users/'.$regularUser->id, [
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users'] )->actingAs( $adminUser )->patch('/users' . '/' . $regularUser->id, [
             'name'                  => $name,
             'email'                 => $email,
             'role'                  => 'user',
@@ -269,9 +270,9 @@ class UsersControllerTest extends TestCase
             'email'           => $email, 
         ]);
 
-        $response->assertStatus(302);
-        $response->assertRedirect('users');
-        $response->assertSessionHas('success');
+        $response->assertStatus( 302 );
+        $response->assertRedirect( 'users' );
+        $response->assertSessionHas( 'success' );
     }
 
     /**
@@ -281,12 +282,12 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerUpdateResponseForRegularUser()
     {
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         $regularUser->roles()->attach( $regularRole );
 
-        $anotherRegularUser = factory('App\User')->create();
+        $anotherRegularUser = factory( 'App\User' )->create();
 
         $anotherRegularUser->roles()->attach( $regularRole );
 
@@ -294,7 +295,7 @@ class UsersControllerTest extends TestCase
         $email = $this->faker->unique()->safeEmail;
         $password = $this->faker->password();
         
-        $response = $this->actingAs($regularUser)->patch('/users/'.$anotherRegularUser->id, [
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users' . '/' . $regularUser->id ] )->actingAs( $regularUser )->patch('/users'. '/' . $anotherRegularUser->id, [
             'name'                  => $name,
             'email'                 => $email,
             'role'                  => 'user',
@@ -302,9 +303,8 @@ class UsersControllerTest extends TestCase
             'password_confirmation' => $password,
         ]);
 
-        $response->assertStatus(302);
-        $response->assertSessionMissing('success');
-        $response->assertRedirect('home');
+        $response->assertStatus( 403 );
+        $response->assertSessionMissing( 'success' );
     }
 
     /**
@@ -314,26 +314,26 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerDeleteResponseForRootUser()
     {
-        $rootUser = factory('App\User')->create();
-        $rootRole = factory('App\Role')->create(['name' => 'root']);
+        $rootUser = factory( 'App\User' )->create();
+        $rootRole = factory( 'App\Role' )->create( ['name' => 'root'] );
 
         $rootUser->roles()->attach( $rootRole );
 
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         $regularUser->roles()->attach( $regularRole );
         
-        $response = $this->actingAs($rootUser)->delete('/users/'.$regularUser->id);
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users'] )->actingAs( $rootUser )->delete('/users'. '/' . $regularUser->id);
 
         $this->assertDatabaseMissing('users', [
-            'name'            => $regularUser->name,
-            'email'           => $regularUser->email, 
+            'name'  => $regularUser->name,
+            'email' => $regularUser->email, 
         ]);
 
-        $response->assertStatus(302);
-        $response->assertRedirect('users');
-        $response->assertSessionHas('success');
+        $response->assertStatus( 302 );
+        $response->assertRedirect( 'users' );
+        $response->assertSessionHas( 'success' );
     }
 
     /**
@@ -343,26 +343,26 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerDeleteResponseForAdminUser()
     {
-        $adminUser = factory('App\User')->create();
-        $adminRole = factory('App\Role')->create(['name' => 'admin']);
+        $adminUser = factory( 'App\User' )->create();
+        $adminRole = factory( 'App\Role' )->create( ['name' => 'admin'] );
 
         $adminUser->roles()->attach( $adminRole );
 
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create( ['name' => 'user'] );
 
         $regularUser->roles()->attach( $regularRole );
         
-        $response = $this->actingAs($adminUser)->delete('/users/'.$regularUser->id);
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users'] )->actingAs( $adminUser )->delete('/users' . '/' . $regularUser->id);
 
         $this->assertDatabaseMissing('users', [
-            'name'            => $regularUser->name,
-            'email'           => $regularUser->email, 
+            'name'  => $regularUser->name,
+            'email' => $regularUser->email, 
         ]);
 
-        $response->assertStatus(302);
-        $response->assertRedirect('users');
-        $response->assertSessionHas('success');
+        $response->assertStatus( 302 );
+        $response->assertRedirect( 'users' );
+        $response->assertSessionHas( 'success' );
     }
 
     /**
@@ -372,24 +372,23 @@ class UsersControllerTest extends TestCase
      */
     public function testUsersControllerDeleteResponseForRegularUser()
     {
-        $regularUser = factory('App\User')->create();
-        $regularRole = factory('App\Role')->create(['name' => 'user']);
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create(['name' => 'user']);
 
         $regularUser->roles()->attach( $regularRole );
 
-        $anotherRegularUser = factory('App\User')->create();
+        $anotherRegularUser = factory( 'App\User' )->create();
 
         $anotherRegularUser->roles()->attach( $regularRole );
         
-        $response = $this->actingAs($regularUser)->delete('/users/'.$anotherRegularUser->id);
+        $response = $this->actingAs($regularUser)->delete('/users'. '/' . $anotherRegularUser->id);
 
-        $this->assertDatabaseHas('users', [
-            'name'            => $anotherRegularUser->name,
-            'email'           => $anotherRegularUser->email, 
-        ]);
+        $this->assertDatabaseHas( 'users', [
+            'name'  => $anotherRegularUser->name,
+            'email' => $anotherRegularUser->email, 
+        ] );
 
-        $response->assertStatus(302);
-        $response->assertSessionMissing('success');
-        $response->assertRedirect('home');
+        $response->assertStatus( 403 );
+        $response->assertSessionMissing( 'success' );
     }
 }

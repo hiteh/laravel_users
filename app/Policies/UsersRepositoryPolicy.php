@@ -87,7 +87,7 @@ class UsersRepositoryPolicy
         if( $user->id === $targetId ) { return false; } // User cant remove himself/herself.
         if( $target->hasRole( 'root' ) ) { return false; } // Root user can't be removed.
         if( $user->hasRole( 'admin' ) && $target->hasRole( 'admin' ) ) { return false; } // Admin can't remove another admin.
-        if( $user->hasRole( 'root' ) || $target->hasRole( 'admin' ) ) 
+        if( $user->hasRole( 'root' ) || $user->hasRole( 'admin' ) ) 
         {
             return true;
         }
