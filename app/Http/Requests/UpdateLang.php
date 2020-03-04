@@ -25,7 +25,7 @@ class UpdateLang extends FormRequest
     public function rules()
     {
         return [
-            'lang' => [ 'required', Rule::in( ['en', 'pl'] ) ]
+            'lang' => [ 'required', 'alpha', Rule::in( ['en', 'pl'] ) ]
         ];
     }
 }
