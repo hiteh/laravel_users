@@ -65,8 +65,6 @@ class RegisterController extends Controller
         {
             redirect()->back()->withErrors( $error );
         }
-
-
     }
 
     /**
