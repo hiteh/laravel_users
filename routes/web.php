@@ -19,7 +19,7 @@ Route::middleware(['lang'])->group(function () {
 		//Add
 	Route::post('/users', 'UsersController@store')->name('users.store');
 		//Edit
-	Route::patch('/users/{id}', 'UsersController@update')->name('users.update');
+	Route::patch('/users/{id?}', 'UsersController@update')->name('users.update');
 		//Delete
 	Route::delete('/users/{id}', 'UsersController@destroy')->name('users.destroy');
 });
