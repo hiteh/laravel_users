@@ -16,8 +16,7 @@ class LangSwitch
      */
     public function handle($request, Closure $next)
     {   
-        // 
-        if ( session('lang') )
+        if ( session()->has('lang') && session( 'lang' ) !== App::getLocale() )
         {
             App::setLocale( session('lang') );
         }
