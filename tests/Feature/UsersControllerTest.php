@@ -307,6 +307,39 @@ class UsersControllerTest extends TestCase
         $response->assertSessionMissing( 'success' );
     }
 
+
+    /**
+     * Test users controller update response for regular user without id.
+     *
+     * @return void
+     */
+    public function testUsersControllerUpdateResponseForRegularUserWithoutId()
+    {
+        $regularUser = factory( 'App\User' )->create();
+        $regularRole = factory( 'App\Role' )->create( ['name' => 'user'] );
+
+        $regularUser->roles()->attach( $regularRole );
+
+        $anotherRegularUser = factory( 'App\User' )->create();
+
+        $anotherRegularUser->roles()->attach( $regularRole );
+
+        $name = $this->faker->name;
+        $email = $this->faker->unique()->safeEmail;
+        $password = $this->faker->password();
+
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/users' . '/' . $regularUser->id ] )->actingAs( $regularUser )->patch('/users', [
+            'name'                  => $name,
+            'email'                 => $email,
+            'role'                  => 'user',
+            'password'              => $password,
+            'password_confirmation' => $password,
+        ]);
+
+        $response->assertStatus( 403 );
+        $response->assertSessionMissing( 'success' );
+    }
+
     /**
      * Test users controller delete response for root user.
      *

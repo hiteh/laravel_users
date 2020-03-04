@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
+use App\Http\Middleware\LangSwitch;
+use Illuminate\Http\Request;
 
 class LangControllerTest extends TestCase
 {
@@ -51,6 +53,29 @@ class LangControllerTest extends TestCase
         $response_en = $this->post('/lang', ['lang' => 'en']);
 
         $response_en->assertSessionHas('lang', 'en');
+
+    }
+
+    /**
+     * Test language switch middleware.
+     *
+     * @return void
+     */
+    public function testLangSwitchMiddleware()
+    {
+        $request = new Request;
+        $middleware = new LangSwitch;
+        $this->post( '/lang', ['lang' => 'pl'] );
+
+        $middleware->handle( $request, function ( $req ) {
+            $this->assertEquals( 'pl', app()->getLocale() );
+        });
+
+        $this->post( '/lang', ['lang' => 'en'] );
+
+        $middleware->handle( $request, function ( $req ) {
+            $this->assertEquals( 'en', app()->getLocale() );
+        });
 
     }
 }

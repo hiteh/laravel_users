@@ -30,6 +30,7 @@ class RootControllerTest extends TestCase
     public function tearDown()
     {
         Mockery::close();
+        parent::tearDown();
     }
 
     /**

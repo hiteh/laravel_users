@@ -23,9 +23,15 @@ class HomeControllerTest extends TestCase
     {
         $user = factory('App\User')->create();
 
-        $response = $this->actingAs($user, 'web')->get('/home');
+        $response = $this->actingAs( $user, 'web' )->get( '/home' );
 
-        $response->assertStatus(200);
+        $response->assertStatus( 200 );
+
+        $response = $this->withHeaders( ['HTTP_REFERER' => '/'] )->actingAs( $user, 'web' )->get( '/' );
+
+        $response->assertStatus( 302 );
+        
+        $response->assertRedirect( '/home' );
     }
 
     /**
@@ -36,10 +42,10 @@ class HomeControllerTest extends TestCase
     public function testNotLoggedInUserResponseStatus()
     {
 
-        $response = $this->get('/home');
+        $response = $this->get( '/home' );
 
-        $response->assertStatus(302);
+        $response->assertStatus( 302 );
 
-        $response->assertLocation('login');
+        $response->assertLocation( 'login' );
     }
 }
