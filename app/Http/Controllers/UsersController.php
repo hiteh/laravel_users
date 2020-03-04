@@ -7,7 +7,6 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\CreateUser;
 use App\Http\Requests\UpdateUser;
-use Illuminate\Support\Facades\Gate;
 use App\Interfaces\UsersRepositoryInterface;
 
 class UsersController extends Controller
@@ -45,8 +44,7 @@ class UsersController extends Controller
 
     public function index( Request $request, User $user, $id = null )
     {
-
-        $this->authorize( 'view', $user );   
+        $this->authorize( 'view', [$user, $request] );   
 
         if( isset( $id ) )
         {
@@ -94,9 +92,9 @@ class UsersController extends Controller
      * @param  string  $id
      * @return \Illuminate\Http\Response
      */
-    public function update( $id, UpdateUser $request, User $user )
+    public function update( UpdateUser $request, User $user, $id = null )
     {   
-        $this->authorize( 'update', $user );
+        $this->authorize( 'update', [$user, $request] );
         $data = $request->validated();
         $this->repository->update( $data, $id );
         $response = $this->repository->response();
@@ -112,9 +110,9 @@ class UsersController extends Controller
      * @param  string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy( $id, User $user )
+    public function destroy( Request $request, User $user, $id = null )
     {
-        $this->authorize( 'delete', $user );
+        $this->authorize( 'delete', [$user, $request] );
         $this->repository->delete( $id );
         $response = $this->repository->response();
         extract( $response );

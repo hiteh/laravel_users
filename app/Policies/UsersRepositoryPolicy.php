@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\User;
+use Illuminate\Http\Request;
+use App\Http\Requests\UpdateUser;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class UsersRepositoryPolicy
@@ -16,11 +18,11 @@ class UsersRepositoryPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function view( User $user, User $model )
+    public function view( User $user, User $model, Request $request )
     {
-        if( isset( request()->id ) ) // Every user can see his/her own profile.
+        if( isset( $request->id) ) // Every user can see his/her own profile.
         {
-            $target = $model->all()->find( request()->id );
+            $target = $model->all()->find( $request->id );
             return isset( $target ) && $user->id === $target->id;
         }
 
@@ -45,10 +47,10 @@ class UsersRepositoryPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function update( User $user, User $model )
+    public function update( User $user, User $model, UpdateUser $request )
     {
-        $targetId = request()->id;
-        $targetRole = request()->get('role');
+        $targetId = $request->id;
+        $targetRole = $request->get('role');
 
         if( isset( $targetId ) ) // User's id must exist.
         {
@@ -60,11 +62,11 @@ class UsersRepositoryPolicy
                 return true;
             }
 
-            if( $user->hasRole( 'root' ) || $user->hasRole( 'admin' ) )
+            if( isset( $target ) && isset( $targetRole ) && $user->hasRole( 'root' ) || $user->hasRole( 'admin' ) )
             {
                 if( $user->hasRole( 'admin' ) && $target->hasRole( 'root' ) ) { return false; } // Admin can't change root user data.
                 if( $user->hasRole( 'admin' ) && $target->hasRole( 'admin' ) ) { return false; } // Admin can't change another admin's data.
-                if( $target->hasRole( 'root') && isset( $targetRole ) && 'root' !== $targetRole ) { return false; } // Nobody can change root's role
+                if( $target->hasRole( 'root') && 'root' !== $targetRole ) { return false; } // Nobody can change root's role
                 return true;
             }    
             return false;
@@ -79,9 +81,9 @@ class UsersRepositoryPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function delete( User $user, User $model )
+    public function delete( User $user, User $model, Request $request )
     {
-        $targetId = request()->id;
+        $targetId = $request->id;
         $target = $model->all()->find( $targetId );
 
         if( $user->id === $targetId ) { return false; } // User cant remove himself/herself.
@@ -92,29 +94,5 @@ class UsersRepositoryPolicy
             return true;
         }
         return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
-     */
-    public function restore(User $user, User $model)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
-     */
-    public function forceDelete(User $user, User $model)
-    {
-        //
     }
 }
